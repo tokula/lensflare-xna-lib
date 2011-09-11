@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test3D BEPUphysics", "Test3D BEPUphysics\Test3D BEPUphysics.csproj", "{8175680E-04C0-40F9-9C3F-003A00D24507}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5F41E60D-051B-4BF7-A67B-49335F565536} = {5F41E60D-051B-4BF7-A67B-49335F565536}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test3D BEPUphysicsContent", "Test3D BEPUphysics\Content\Test3D BEPUphysicsContent.contentproj", "{6B5449F3-126D-4939-A125-AF454AC6EB3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lensflare XNA Lib", "Lensflare XNA Lib\Lensflare XNA Lib\Lensflare XNA Lib.csproj", "{5F41E60D-051B-4BF7-A67B-49335F565536}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lensflare XNA Lib Content", "Lensflare XNA Lib\Lensflare XNA Lib Content\Lensflare XNA Lib Content.contentproj", "{0C0B270B-7329-4C91-B443-5128208B357E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8175680E-04C0-40F9-9C3F-003A00D24507}.Debug|x86.ActiveCfg = Debug|x86
+		{8175680E-04C0-40F9-9C3F-003A00D24507}.Debug|x86.Build.0 = Debug|x86
+		{8175680E-04C0-40F9-9C3F-003A00D24507}.Release|x86.ActiveCfg = Release|x86
+		{8175680E-04C0-40F9-9C3F-003A00D24507}.Release|x86.Build.0 = Release|x86
+		{6B5449F3-126D-4939-A125-AF454AC6EB3F}.Debug|x86.ActiveCfg = Debug|x86
+		{6B5449F3-126D-4939-A125-AF454AC6EB3F}.Release|x86.ActiveCfg = Release|x86
+		{5F41E60D-051B-4BF7-A67B-49335F565536}.Debug|x86.ActiveCfg = Debug|x86
+		{5F41E60D-051B-4BF7-A67B-49335F565536}.Debug|x86.Build.0 = Debug|x86
+		{5F41E60D-051B-4BF7-A67B-49335F565536}.Release|x86.ActiveCfg = Release|x86
+		{5F41E60D-051B-4BF7-A67B-49335F565536}.Release|x86.Build.0 = Release|x86
+		{0C0B270B-7329-4C91-B443-5128208B357E}.Debug|x86.ActiveCfg = Debug|x86
+		{0C0B270B-7329-4C91-B443-5128208B357E}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
