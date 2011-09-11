@@ -1,0 +1,418 @@
+using System;
+using LensflareGameFramework;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Util;
+using Shape3D;
+using System.Collections.Generic;
+using BEPUphysics.MathExtensions;
+using BEPUphysics;
+using BEPUphysics.Collidables.MobileCollidables;
+using BEPUphysics.Collidables;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
+
+namespace EngineTest {
+	/// <summary>
+	/// This is the main type for your game
+	/// </summary>
+	class Game1 : Microsoft.Xna.Framework.Game {
+		public GraphicsDeviceManager graphics;
+		public SpriteBatch spriteBatch;
+
+        public Engine engine;
+        public Space space;
+
+        SoundEffect[] noteSound;
+
+        public SmoothCamera camera;
+
+        Random random = new Random();
+
+		Vector3 debugVector = Vector3.Zero;
+        SpriteFont defaultFont;
+
+        ArrowEntity lightArrow;
+
+        Dictionary<IntVector2, Tile> tiles = new Dictionary<IntVector2, Tile>();
+
+        Creator creator;
+
+		public Game1() {
+			graphics = new GraphicsDeviceManager(this);
+
+			Content.RootDirectory = "Content";
+		}
+
+		/// <summary>
+		/// Allows the game to perform any initialization it needs to before starting to run.
+		/// This is where it can query for any required services and load any non-graphic
+		/// related content.  Calling base.Initialize will enumerate through any components
+		/// and initialize them as well.
+		/// </summary>
+		protected override void Initialize() {
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferMultiSampling = true;
+            graphics.ApplyChanges();
+
+            Window.Title = "XNA 3D Graphics with BEPUphysics";
+
+            engine = new Engine(this);
+            engine.Initialize();
+
+            Window.Title = "XNA 3D Graphics with BEPUphysics";
+
+			base.Initialize();
+		}
+
+		/// <summary>
+		/// LoadContent will be called once per game and is the place to load
+		/// all of your content.
+		/// </summary>
+		protected override void LoadContent() {
+			spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            engine.Load();
+
+			camera = new SmoothCamera();
+            camera.AspectRatio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;
+			camera.Position = new Vector3(0, 1, 10);
+			camera.Rotation = new Vector3(0, 0, 0);
+
+            noteSound = new SoundEffect[] {
+                Content.Load<SoundEffect>("note_c"),
+                Content.Load<SoundEffect>("note_d"),
+                Content.Load<SoundEffect>("note_ds"),
+                Content.Load<SoundEffect>("note_f"),
+                Content.Load<SoundEffect>("note_g"),
+                Content.Load<SoundEffect>("note_gs"),
+                Content.Load<SoundEffect>("note_as"),
+            };
+
+            defaultFont = Content.Load<SpriteFont>("defaultFont");
+
+            space = new Space();
+            space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
+
+            //float groundThickness = 0.05f;
+
+            //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
+            //Entity.Add(new BoxEntity(this, new Vector3(0, 5, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
+            //Entity.Add(new SphereEntity(this, new Vector3(0, 5, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
+            lightArrow = new ArrowEntity(this, new Vector3(0, 1, 0), new Vector3(1, 1, 1), true, engine.ColorToTexture(Color.Green));
+            Entity.Add(lightArrow);
+            //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
+            creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
+            Entity.Add(creator);
+		}
+
+		/// <summary>
+		/// UnloadContent will be called once per game and is the place to unload
+		/// all content.
+		/// </summary>
+		protected override void UnloadContent() {
+			// TODO: Unload any non ContentManager content here
+		}
+
+        protected void ProcessInput(GameTime gameTime) {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+                this.Exit();
+            }
+
+            float movementBoost = 1.0f;
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) {
+                movementBoost = 50.0f;
+            }
+
+            float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds; ;
+            float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
+            float cameraRotationSpeed = 1.5f * elapsedSeconds;
+            float mouseRotationSpeed = 0.1f * elapsedSeconds;
+            bool debugValueHasChanged = false;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
+                debugVector.X -= debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
+                debugVector.X += debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
+                debugVector.Y += debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
+                debugVector.Y -= debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.PageUp)) {
+                debugVector.Z += debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.PageDown)) {
+                debugVector.Z -= debugValueSpeed;
+                debugValueHasChanged = true;
+            }
+            if (debugValueHasChanged) {
+                Console.WriteLine("debugVector: " + VectorToString(debugVector));
+            }
+
+            bool wasdForCamera = false;
+            if (wasdForCamera) {
+                //camera controls:
+                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
+                    camera.Velocity -= camera.RotationMatrix.Forward * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
+                    camera.Velocity += camera.RotationMatrix.Forward * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
+                    camera.Velocity += camera.RotationMatrix.Left * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
+                    camera.Velocity += camera.RotationMatrix.Right * cameraMovementSpeed;
+                }
+            } else {
+                float creatorMovementSpeed = 30.0f * elapsedSeconds;
+                Vector3 sideAxis = Vector3.Cross(camera.RotationMatrix.Right, Vector3.Up);
+                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
+                    creator.AngularVelocity += camera.RotationMatrix.Right * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
+                    creator.AngularVelocity += camera.RotationMatrix.Left * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
+                    creator.AngularVelocity += sideAxis * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
+                    creator.AngularVelocity -= sideAxis * creatorMovementSpeed;
+                }
+                camera.Position = creator.Position - camera.RotationMatrix.Forward * 10;
+            }
+
+            Vector3 rotation = Vector3.Zero;
+            if (Keyboard.GetState().IsKeyDown(Keys.Q)) {
+                rotation.Y += cameraRotationSpeed;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.E)) {
+                rotation.Y -= cameraRotationSpeed;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.R)) {
+                rotation.X += cameraRotationSpeed;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.F)) {
+                rotation.X -= cameraRotationSpeed;
+            }
+            rotation.X -= Input.MouseDeltaY * mouseRotationSpeed;
+            rotation.Y -= Input.MouseDeltaX * mouseRotationSpeed;
+            camera.Rotation += rotation;
+
+            if (Input.KeyboardPressed(Keys.K) || Keyboard.GetState().IsKeyDown(Keys.L)) {
+                if (random.Next(1000) < 10) {
+                    Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("tits")));
+                } else {
+                    Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.O)) {
+                Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
+                //Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, TextureFromColor(Color.Orange)));
+            }
+
+            if (Input.KeyboardPressed(Keys.X)) {
+                BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 0.3f, Content.Load<Texture2D>("alufolie"));
+                et.physicsBox.LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                Entity.Add(et);
+            }
+            if (Input.KeyboardPressed(Keys.C)) {
+                BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 10.0f, Content.Load<Texture2D>("propeller"));
+                et.physicsBox.LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                Entity.Add(et);
+            }
+
+            if (Input.MousePressed(Input.MouseButton.RightButton)) {
+                Entity entityHit = engine.GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+
+                if (entityHit != null) {
+                    Entity.Remove(entityHit);
+                }
+            }
+            if (Input.MousePressed(Input.MouseButton.LeftButton)) {
+                Entity entityHit = engine.GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+                if (entityHit != null) {
+                    if(entityHit is BoxEntity) {
+                        SplitBox((BoxEntity)entityHit);
+                    }
+                }
+            }
+            if (Input.KeyboardPressed(Keys.D1)) {
+                noteSound[0].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D2)) {
+                noteSound[1].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D3)) {
+                noteSound[2].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D4)) {
+                noteSound[3].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D5)) {
+                noteSound[4].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D6)) {
+                noteSound[5].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D7)) {
+                noteSound[6].Play();
+            }
+            if (Input.KeyboardPressed(Keys.D0)) {
+                noteSound[random.Next(7)].Play();
+            }
+        }
+
+        protected void SplitBox(BoxEntity box) {
+            float t = box.physicsBox.Length / 4;
+            if (t > 0.01f) {
+                Entity.Remove(box);
+
+                Vector3 size = new Vector3(box.physicsBox.Length / 4, box.physicsBox.Height / 4, box.physicsBox.Width / 4);
+
+                Matrix eWorldMatrix = box.physicsBox.WorldTransform;
+                Matrix3X3 eom = box.physicsBox.OrientationMatrix;
+                float mass = box.physicsBox.Mass / 8;
+
+                BoxEntity eFrontUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eFrontUpRight.physicsBox.WorldTransform = eWorldMatrix;
+                eFrontUpRight.physicsBox.Position += eom.Up * t + eom.Right * t + eom.Forward * t;
+                eFrontUpRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eFrontUpRight);
+
+                BoxEntity eFrontUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eFrontUpLeft.physicsBox.WorldTransform = eWorldMatrix;
+                eFrontUpLeft.physicsBox.Position += eom.Up * t + eom.Left * t + eom.Forward * t;
+                eFrontUpLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eFrontUpLeft);
+
+                BoxEntity eFrontDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eFrontDownRight.physicsBox.WorldTransform = eWorldMatrix;
+                eFrontDownRight.physicsBox.Position += eom.Down * t + eom.Right * t + eom.Forward * t;
+                eFrontDownRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eFrontDownRight);
+
+                BoxEntity eFrontDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eFrontDownLeft.physicsBox.WorldTransform = eWorldMatrix;
+                eFrontDownLeft.physicsBox.Position += eom.Down * t + eom.Left * t + eom.Forward * t;
+                eFrontDownLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eFrontDownLeft);
+
+                BoxEntity eBackUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eBackUpRight.physicsBox.WorldTransform = eWorldMatrix;
+                eBackUpRight.physicsBox.Position += eom.Up * t + eom.Right * t + eom.Backward * t;
+                eBackUpRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eBackUpRight);
+
+                BoxEntity eBackUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eBackUpLeft.physicsBox.WorldTransform = eWorldMatrix;
+                eBackUpLeft.physicsBox.Position += eom.Up * t + eom.Left * t + eom.Backward * t;
+                eBackUpLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eBackUpLeft);
+
+                BoxEntity eBackDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eBackDownRight.physicsBox.WorldTransform = eWorldMatrix;
+                eBackDownRight.physicsBox.Position += eom.Down * t + eom.Right * t + eom.Backward * t;
+                eBackDownRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eBackDownRight);
+
+                BoxEntity eBackDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                eBackDownLeft.physicsBox.WorldTransform = eWorldMatrix;
+                eBackDownLeft.physicsBox.Position += eom.Down * t + eom.Left * t + eom.Backward * t;
+                eBackDownLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
+                Entity.Add(eBackDownLeft);
+            }
+        }
+
+		/// <summary>
+		/// Allows the game to run logic such as updating the world,
+		/// checking for collisions, gathering input, and playing audio.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Update(GameTime gameTime) {
+			if (IsActive) {
+				float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                ProcessInput(gameTime);
+
+                //create tiles:
+                float tileExistenceRadiusF = 1.25f;
+                int tileExistenceRadiusI = (int)(tileExistenceRadiusF + 3);
+                Vector3 creatorPos = creator.Position;
+                IntVector2 creatorTilePos = new IntVector2((int)creatorPos.X, (int)creatorPos.Z);
+                //float offsetX = creatorPos.X - creatorTilePos.X * Tile.Size.X * 2;
+                //float offsetZ = creatorPos.Z - creatorTilePos.Y * Tile.Size.Z * 2;
+                for (int x = -tileExistenceRadiusI; x <= tileExistenceRadiusI; ++x) {
+                    for (int z = -tileExistenceRadiusI; z <= tileExistenceRadiusI; ++z) {
+                        IntVector2 pickedPoint = new IntVector2(x + creatorTilePos.X, z + creatorTilePos.Y);
+                        float xDist = (creatorPos.X - pickedPoint.X * Tile.Size.X * 2);
+                        float zDist = (creatorPos.Z - pickedPoint.Y * Tile.Size.Z * 2);
+                        float dist = (float)Math.Sqrt(xDist * xDist + zDist * zDist);
+                        if (dist <= tileExistenceRadiusF) {
+                            if (!tiles.ContainsKey(pickedPoint)) {
+                                int colorMin = 150;
+                                int colorMax = 255;
+                                Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax)*0);
+                                Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X*2, 1, pickedPoint.Y * Tile.Size.Z*2), engine.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
+                                Entity.Add(tile);
+                                tiles.Add(pickedPoint, tile);
+                                noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
+                            }
+                        }
+                    }
+                }
+
+                camera.Update(gameTime);
+                space.Update(elapsedSeconds);
+                engine.Update(gameTime); 
+			}
+
+			base.Update(gameTime);
+		}
+
+		/// <summary>
+		/// This is called when the game should draw itself.
+		/// </summary>
+		/// <param name="gameTime">Provides a snapshot of timing values.</param>
+		protected override void Draw(GameTime gameTime) {
+            //reset wegen SpriteBatch:
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+            engine.Draw();
+
+            //hud:
+            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
+            spriteBatch.Begin();
+            spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
+            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
+            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
+            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
+            spriteBatch.End();
+
+			base.Draw(gameTime);
+		}
+
+        public void HandleCollision(EntityCollidable sender, Collidable other, CollidablePairHandler pair) {
+            //TODO: ...
+        }
+
+        public static String VectorToString(Vector3 v) {
+            return "(" + v.X.ToString("0.00") + " | " + v.Y.ToString("0.00") + " | " + v.Z.ToString("0.00") + ")";
+        }
+	}
+}
