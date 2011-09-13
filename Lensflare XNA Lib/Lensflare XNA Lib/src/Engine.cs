@@ -148,7 +148,7 @@ namespace LensflareGameFramework {
 
         public Entity GetEntityFromRay(Vector3 position, Vector3 direction) {
             Entity entityHit = null;
-            /* TODO: ...
+            /* TODO: ray ohne physics
             float min = float.PositiveInfinity;
             Ray ray = new Ray(position, direction);
             foreach (Entity entity in Entity.All) {

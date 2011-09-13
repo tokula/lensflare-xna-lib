@@ -25,7 +25,7 @@ namespace EngineTest {
 
         protected override void Dispose() {
             physicsBox.CollisionInformation.Events.RemoveAllEvents();
-            game.space.Remove(physicsBox);
+            Game.space.Remove(physicsBox);
             visualBox = null;
             physicsBox = null;
             base.Dispose();

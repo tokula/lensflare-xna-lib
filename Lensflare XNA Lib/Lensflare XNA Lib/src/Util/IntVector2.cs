@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Util {
@@ -75,7 +72,7 @@ namespace Util {
         }
 
         public IntVector2 ToDirection8() {
-            return new IntVector2(X>0?1:X<0?-1:0, Y>0?1:Y<0?-1:0);
+            return new IntVector2(X > 0 ? 1 : X < 0 ? -1 : 0, Y > 0 ? 1 : Y < 0 ? -1 : 0);
         }
     }
 }
