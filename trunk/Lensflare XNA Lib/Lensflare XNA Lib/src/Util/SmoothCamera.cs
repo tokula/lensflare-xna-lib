@@ -12,8 +12,9 @@ namespace Util {
             set { dampingFactor = value; }
         }
 
-        public SmoothCamera() : base() {
-		}
+        public SmoothCamera()
+            : base() {
+        }
 
         public override void Update(GameTime gameTime) {
             velocity *= dampingFactor;
