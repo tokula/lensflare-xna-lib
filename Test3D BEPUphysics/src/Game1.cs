@@ -38,6 +38,7 @@ namespace EngineTest {
         Dictionary<IntVector2, Tile> tiles = new Dictionary<IntVector2, Tile>();
 
         Creator creator;
+        bool wasdForCamera = false;
 
 		public Game1() {
 			graphics = new GraphicsDeviceManager(this);
@@ -163,7 +164,6 @@ namespace EngineTest {
                 Console.WriteLine("debugVector: " + VectorToString(debugVector));
             }
 
-            bool wasdForCamera = false;
             if (wasdForCamera) {
                 //camera controls:
                 if (Keyboard.GetState().IsKeyDown(Keys.S)) {
@@ -227,24 +227,26 @@ namespace EngineTest {
 
             if (Input.KeyboardPressed(Keys.X)) {
                 BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 0.3f, Content.Load<Texture2D>("alufolie"));
-                et.physicsBox.LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                et.PhysicsEntities[0].LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
                 Entity.Add(et);
             }
             if (Input.KeyboardPressed(Keys.C)) {
                 BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 10.0f, Content.Load<Texture2D>("propeller"));
-                et.physicsBox.LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                et.PhysicsEntities[0].LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
                 Entity.Add(et);
             }
 
             if (Input.MousePressed(Input.MouseButton.RightButton)) {
-                Entity entityHit = engine.GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+                Entity entityHit = GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
 
                 if (entityHit != null) {
-                    Entity.Remove(entityHit);
+                    if (entityHit is BoxEntity || entityHit is SphereEntity) {
+                        Entity.Remove(entityHit);
+                    }
                 }
             }
             if (Input.MousePressed(Input.MouseButton.LeftButton)) {
-                Entity entityHit = engine.GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+                Entity entityHit = GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
                 if (entityHit != null) {
                     if(entityHit is BoxEntity) {
                         SplitBox((BoxEntity)entityHit);
@@ -275,66 +277,86 @@ namespace EngineTest {
             if (Input.KeyboardPressed(Keys.D0)) {
                 noteSound[random.Next(7)].Play();
             }
+
+            if (Input.KeyboardPressed(Keys.G)) {
+                wasdForCamera = !wasdForCamera;
+            }
         }
 
         protected void SplitBox(BoxEntity box) {
-            float t = box.physicsBox.Length / 4;
-            if (t > 0.01f) {
-                Entity.Remove(box);
+            var e = box.PhysicsEntities[0];
+            if (e is BEPUphysics.Entities.Prefabs.Box) {
+                BEPUphysics.Entities.Prefabs.Box physicsBox = (BEPUphysics.Entities.Prefabs.Box)e;
+                float t = physicsBox.Length / 4;
+                if (t > 0.01f) {
+                    Entity.Remove(box);
 
-                Vector3 size = new Vector3(box.physicsBox.Length / 4, box.physicsBox.Height / 4, box.physicsBox.Width / 4);
+                    Vector3 size = new Vector3(physicsBox.Length / 4, physicsBox.Height / 4, physicsBox.Width / 4);
 
-                Matrix eWorldMatrix = box.physicsBox.WorldTransform;
-                Matrix3X3 eom = box.physicsBox.OrientationMatrix;
-                float mass = box.physicsBox.Mass / 8;
+                    Matrix eWorldMatrix = physicsBox.WorldTransform;
+                    Matrix3X3 eom = physicsBox.OrientationMatrix;
+                    float mass = physicsBox.Mass / 8;
 
-                BoxEntity eFrontUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eFrontUpRight.physicsBox.WorldTransform = eWorldMatrix;
-                eFrontUpRight.physicsBox.Position += eom.Up * t + eom.Right * t + eom.Forward * t;
-                eFrontUpRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eFrontUpRight);
+                    BEPUphysics.Entities.Prefabs.Box tpb;
+                    
+                    BoxEntity eFrontUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpRight.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Up * t + eom.Right * t + eom.Forward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eFrontUpRight);
 
-                BoxEntity eFrontUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eFrontUpLeft.physicsBox.WorldTransform = eWorldMatrix;
-                eFrontUpLeft.physicsBox.Position += eom.Up * t + eom.Left * t + eom.Forward * t;
-                eFrontUpLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eFrontUpLeft);
+                    BoxEntity eFrontUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpLeft.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Up * t + eom.Left * t + eom.Forward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eFrontUpLeft);
 
-                BoxEntity eFrontDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eFrontDownRight.physicsBox.WorldTransform = eWorldMatrix;
-                eFrontDownRight.physicsBox.Position += eom.Down * t + eom.Right * t + eom.Forward * t;
-                eFrontDownRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eFrontDownRight);
+                    BoxEntity eFrontDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownRight.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Down * t + eom.Right * t + eom.Forward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eFrontDownRight);
 
-                BoxEntity eFrontDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eFrontDownLeft.physicsBox.WorldTransform = eWorldMatrix;
-                eFrontDownLeft.physicsBox.Position += eom.Down * t + eom.Left * t + eom.Forward * t;
-                eFrontDownLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eFrontDownLeft);
+                    BoxEntity eFrontDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownLeft.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Down * t + eom.Left * t + eom.Forward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eFrontDownLeft);
 
-                BoxEntity eBackUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eBackUpRight.physicsBox.WorldTransform = eWorldMatrix;
-                eBackUpRight.physicsBox.Position += eom.Up * t + eom.Right * t + eom.Backward * t;
-                eBackUpRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eBackUpRight);
+                    BoxEntity eBackUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpRight.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Up * t + eom.Right * t + eom.Backward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eBackUpRight);
 
-                BoxEntity eBackUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eBackUpLeft.physicsBox.WorldTransform = eWorldMatrix;
-                eBackUpLeft.physicsBox.Position += eom.Up * t + eom.Left * t + eom.Backward * t;
-                eBackUpLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eBackUpLeft);
+                    BoxEntity eBackUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpLeft.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Up * t + eom.Left * t + eom.Backward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eBackUpLeft);
 
-                BoxEntity eBackDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eBackDownRight.physicsBox.WorldTransform = eWorldMatrix;
-                eBackDownRight.physicsBox.Position += eom.Down * t + eom.Right * t + eom.Backward * t;
-                eBackDownRight.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eBackDownRight);
+                    BoxEntity eBackDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownRight.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Down * t + eom.Right * t + eom.Backward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eBackDownRight);
 
-                BoxEntity eBackDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                eBackDownLeft.physicsBox.WorldTransform = eWorldMatrix;
-                eBackDownLeft.physicsBox.Position += eom.Down * t + eom.Left * t + eom.Backward * t;
-                eBackDownLeft.physicsBox.LinearVelocity = box.physicsBox.LinearVelocity;
-                Entity.Add(eBackDownLeft);
+                    BoxEntity eBackDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownLeft.PhysicsEntities[0];
+                    tpb.WorldTransform = eWorldMatrix;
+                    tpb.Position += eom.Down * t + eom.Left * t + eom.Backward * t;
+                    tpb.LinearVelocity = physicsBox.LinearVelocity;
+                    Entity.Add(eBackDownLeft);
+
+                    tpb = null;
+                }
             }
         }
 
@@ -370,7 +392,7 @@ namespace EngineTest {
                                 Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X*2, 1, pickedPoint.Y * Tile.Size.Z*2), engine.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
                                 Entity.Add(tile);
                                 tiles.Add(pickedPoint, tile);
-                                noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
+                                //noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
                             }
                         }
                     }
@@ -399,9 +421,11 @@ namespace EngineTest {
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             spriteBatch.Begin();
             spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
-            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
-            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
-            //Primitive2D.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
+            if (wasdForCamera) {
+                Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
+                Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
+                Primitive2D.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
+            }
             spriteBatch.End();
 
 			base.Draw(gameTime);
@@ -413,6 +437,35 @@ namespace EngineTest {
 
         public static String VectorToString(Vector3 v) {
             return "(" + v.X.ToString("0.00") + " | " + v.Y.ToString("0.00") + " | " + v.Z.ToString("0.00") + ")";
+        }
+
+        public static Entity GetEntityFromRay(Vector3 position, Vector3 direction, out RayHit rayHit) {
+            Entity entityHit = null;
+            float minDist = float.PositiveInfinity;
+            rayHit = new RayHit();
+            rayHit.T = minDist;
+            Ray ray = new Ray(position, direction);
+            foreach (Entity entity in Entity.All) {
+                if(entity is GameEntity) {
+                    GameEntity ge = (GameEntity)entity;
+                    foreach(var physicsEntity in ge.PhysicsEntities) {
+                        physicsEntity.CollisionInformation.RayCast(ray, float.PositiveInfinity, out rayHit);
+                        float dist = rayHit.T;
+                        if (dist > 0.0f) {
+                            if (dist < minDist) {
+                                minDist = dist;
+                                entityHit = entity;
+                            }
+                        }
+                    }
+                }
+            }
+            return entityHit;
+        }
+
+        public static Entity GetEntityFromRay(Vector3 position, Vector3 direction) {
+            RayHit rayHit;
+            return GetEntityFromRay(position, direction, out rayHit);
         }
 	}
 }

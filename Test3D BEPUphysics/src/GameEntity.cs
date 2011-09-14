@@ -8,8 +8,11 @@ using Microsoft.Xna.Framework;
 
 namespace EngineTest {
     abstract class GameEntity : Entity { //TODO: evtl nach engine verschieben (mögliches problem: Game1 referenz)
+        protected List<BEPUphysics.Entities.Entity> physicsEntities = new List<BEPUphysics.Entities.Entity>();
+
         public Game1 Game { get; private set; }
         public Texture2D Texture { get; set; }
+        public List<BEPUphysics.Entities.Entity> PhysicsEntities { get { return physicsEntities; } }
 
         public GameEntity(Game1 game, Texture2D texture) {
             Game = game;
@@ -17,6 +20,12 @@ namespace EngineTest {
 		}
 
         protected override void Dispose() {
+            foreach (var e in physicsEntities) {
+                e.CollisionInformation.Events.RemoveAllEvents();
+                Game.space.Remove(e);
+            }
+            physicsEntities.Clear();
+            physicsEntities = null;
             Game = null;
             Texture = null;
         }
@@ -30,7 +39,7 @@ namespace EngineTest {
             effect.Texture = texture;
             */
 
-            Effect effect = Game.engine.effect;
+            Effect effect = Game.engine.Effect;
             effect.Parameters["xWorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
             effect.Parameters["xTexture"].SetValue(Texture);
             effect.Parameters["xWorld"].SetValue(worldMatrix);

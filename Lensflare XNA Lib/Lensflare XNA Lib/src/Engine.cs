@@ -31,16 +31,13 @@ namespace LensflareGameFramework {
     public class Engine {
         //TODO: properties
 
-        protected Game game;
-
-        public Effect effect;
-
         RenderTarget2D renderTarget;
-        public Texture2D shadowMap;
-
         Random random = new Random();
-
         Vector3 debugVector = Vector3.Zero;
+
+        public Game Game { get; protected set; }
+        public Effect Effect { get; protected set; }
+        private Texture2D ShadowMap { get; set; } //TODO: evtl nicht nötig
 
         public float ambientPower = 0.2f;
         public float lightPower = 1.0f;
@@ -49,13 +46,13 @@ namespace LensflareGameFramework {
         public Matrix lightsViewProjectionMatrix;
 
         //TODO: auch set
-        public int ScreenWidth { get { return game.GraphicsDevice.Viewport.Width; } }
-        public int ScreenHeight { get { return game.GraphicsDevice.Viewport.Height; }  }
+        public int ScreenWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
+        public int ScreenHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
 
         //TODO: Constructor(), Initialize(), Load() evtl. zusammenfassen
 
         public Engine(Game game) {
-            this.game = game;
+            Game = game;
         }
 
         public void Initialize() {
@@ -64,7 +61,7 @@ namespace LensflareGameFramework {
         }
 
         public void Load() {
-            Primitive2D.Init(game.GraphicsDevice);
+            Primitive2D.Init(Game.GraphicsDevice);
 
             //GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
             //GraphicsDevice.PresentationParameters.MultiSampleQuality = 8;
@@ -74,13 +71,13 @@ namespace LensflareGameFramework {
             RasterizerState rasterizerState = new RasterizerState();
             rasterizerState.CullMode = CullMode.CullCounterClockwiseFace;
             rasterizerState.MultiSampleAntiAlias = true;
-            game.GraphicsDevice.RasterizerState = rasterizerState;
+            Game.GraphicsDevice.RasterizerState = rasterizerState;
 
             //effect = new BasicEffect(GraphicsDevice);
-            effect = game.Content.Load<Effect>("TestEffect");
+            Effect = Game.Content.Load<Effect>("TestEffect");
 
             //PresentationParameters pp = game.GraphicsDevice.PresentationParameters;
-            renderTarget = new RenderTarget2D(game.GraphicsDevice, 1024 * 4, 1024 * 4, true, game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
+            renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
         }
 
         public void Update(GameTime gameTime) {
@@ -112,28 +109,28 @@ namespace LensflareGameFramework {
         }
 
         public void Draw() {
-            game.GraphicsDevice.SetRenderTarget(renderTarget);
+            Game.GraphicsDevice.SetRenderTarget(renderTarget);
 
-            game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
             //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.Black, 1.0f, 0);
             DrawScene("ShadowMap");
 
-            game.GraphicsDevice.SetRenderTarget(null);
-            shadowMap = (Texture2D)renderTarget;
+            Game.GraphicsDevice.SetRenderTarget(null);
+            ShadowMap = (Texture2D)renderTarget;
 
-            game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
             //GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
             DrawScene("ShadowedScene");
 
-            shadowMap = null;
+            ShadowMap = null;
         }
 
         private void DrawScene(String technique) {
-            effect.CurrentTechnique = effect.Techniques[technique];
-            effect.Parameters["xLightPos"].SetValue(lightPos);
-            effect.Parameters["xLightPower"].SetValue(lightPower);
-            effect.Parameters["xAmbient"].SetValue(ambientPower);
-            effect.Parameters["xShadowMap"].SetValue(shadowMap);
+            Effect.CurrentTechnique = Effect.Techniques[technique];
+            Effect.Parameters["xLightPos"].SetValue(lightPos);
+            Effect.Parameters["xLightPower"].SetValue(lightPower);
+            Effect.Parameters["xAmbient"].SetValue(ambientPower);
+            Effect.Parameters["xShadowMap"].SetValue(ShadowMap);
 
             Entity.DrawAll();
         }
@@ -146,30 +143,8 @@ namespace LensflareGameFramework {
             return "(" + v.X.ToString("0.00") + " | " + v.Y.ToString("0.00") + " | " + v.Z.ToString("0.00") + ")";
         }
 
-        public Entity GetEntityFromRay(Vector3 position, Vector3 direction) {
-            Entity entityHit = null;
-            /* TODO: ray ohne physics
-            float min = float.PositiveInfinity;
-            Ray ray = new Ray(position, direction);
-            foreach (Entity entity in Entity.All) {
-                if (entity is BoxEntity) {
-                    BoxEntity entityTest = ((BoxEntity)entity);
-                    RayHit rayHit;
-                    entityTest.physicsBox.CollisionInformation.RayCast(ray, float.PositiveInfinity, out rayHit);
-                    float dist = rayHit.T;
-                    if (dist > 0.0f) {
-                        if (dist < min) {
-                            min = dist;
-                            entityHit = entity;
-                        }
-                    }
-                }
-            }*/
-            return entityHit;
-        }
-
         public Texture2D ColorToTexture(Color color) {
-            Texture2D texture = new Texture2D(game.GraphicsDevice, 1, 1);
+            Texture2D texture = new Texture2D(Game.GraphicsDevice, 1, 1);
             texture.SetData<Color>(new Color[] { color });
             return texture;
         }
@@ -180,6 +155,5 @@ namespace LensflareGameFramework {
             m.Right = Vector3.Normalize(Vector3.Cross(m.Forward, Vector3.Up));
             m.Up = Vector3.Normalize(Vector3.Cross(m.Right, m.Forward));
         }
-
     }
 }
