@@ -164,38 +164,6 @@ namespace EngineTest {
                 Console.WriteLine("debugVector: " + VectorToString(debugVector));
             }
 
-            if (wasdForCamera) {
-                //camera controls:
-                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
-                    camera.Velocity -= camera.RotationMatrix.Forward * cameraMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
-                    camera.Velocity += camera.RotationMatrix.Forward * cameraMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
-                    camera.Velocity += camera.RotationMatrix.Left * cameraMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
-                    camera.Velocity += camera.RotationMatrix.Right * cameraMovementSpeed;
-                }
-            } else {
-                float creatorMovementSpeed = 30.0f * elapsedSeconds;
-                Vector3 sideAxis = Vector3.Cross(camera.RotationMatrix.Right, Vector3.Up);
-                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
-                    creator.AngularVelocity += camera.RotationMatrix.Right * creatorMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
-                    creator.AngularVelocity += camera.RotationMatrix.Left * creatorMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
-                    creator.AngularVelocity += sideAxis * creatorMovementSpeed;
-                }
-                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
-                    creator.AngularVelocity -= sideAxis * creatorMovementSpeed;
-                }
-                camera.Position = creator.Position - camera.RotationMatrix.Forward * 10;
-            }
-
             Vector3 rotation = Vector3.Zero;
             if (Keyboard.GetState().IsKeyDown(Keys.Q)) {
                 rotation.Y += cameraRotationSpeed;
@@ -213,6 +181,40 @@ namespace EngineTest {
             rotation.Y -= Input.MouseDeltaX * mouseRotationSpeed;
             camera.Rotation += rotation;
 
+            Matrix cameraRotationMatrix = camera.CalcRotationMatrix();
+
+            if (wasdForCamera) {
+                //camera controls:
+                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
+                    camera.Velocity -= cameraRotationMatrix.Forward * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
+                    camera.Velocity += cameraRotationMatrix.Forward * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
+                    camera.Velocity += cameraRotationMatrix.Left * cameraMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
+                    camera.Velocity += cameraRotationMatrix.Right * cameraMovementSpeed;
+                }
+            } else {
+                float creatorMovementSpeed = 30.0f * elapsedSeconds;
+                Vector3 sideAxis = Vector3.Cross(cameraRotationMatrix.Right, Vector3.Up);
+                if (Keyboard.GetState().IsKeyDown(Keys.S)) {
+                    creator.AngularVelocity += cameraRotationMatrix.Right * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.W)) {
+                    creator.AngularVelocity += cameraRotationMatrix.Left * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.A)) {
+                    creator.AngularVelocity += sideAxis * creatorMovementSpeed;
+                }
+                if (Keyboard.GetState().IsKeyDown(Keys.D)) {
+                    creator.AngularVelocity -= sideAxis * creatorMovementSpeed;
+                }
+                camera.Position = creator.Position - cameraRotationMatrix.Forward * 10;
+            }
+
             if (Input.KeyboardPressed(Keys.K) || Keyboard.GetState().IsKeyDown(Keys.L)) {
                 if (random.Next(1000) < 10) {
                     Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("tits")));
@@ -227,17 +229,17 @@ namespace EngineTest {
 
             if (Input.KeyboardPressed(Keys.X)) {
                 BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 0.3f, Content.Load<Texture2D>("alufolie"));
-                et.PhysicsEntities[0].LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                et.PhysicsEntities[0].LinearVelocity = cameraRotationMatrix.Forward * 10.0f;
                 Entity.Add(et);
             }
             if (Input.KeyboardPressed(Keys.C)) {
                 BoxEntity et = new BoxEntity(this, camera.Position, new Vector3(1, 1, 1) * 0.1f, 10.0f, Content.Load<Texture2D>("propeller"));
-                et.PhysicsEntities[0].LinearVelocity = camera.RotationMatrix.Forward * 10.0f;
+                et.PhysicsEntities[0].LinearVelocity = cameraRotationMatrix.Forward * 10.0f;
                 Entity.Add(et);
             }
 
             if (Input.MousePressed(Input.MouseButton.RightButton)) {
-                Entity entityHit = GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+                Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
 
                 if (entityHit != null) {
                     if (entityHit is BoxEntity || entityHit is SphereEntity) {
@@ -246,7 +248,7 @@ namespace EngineTest {
                 }
             }
             if (Input.MousePressed(Input.MouseButton.LeftButton)) {
-                Entity entityHit = GetEntityFromRay(camera.Position, camera.RotationMatrix.Forward);
+                Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
                 if (entityHit != null) {
                     if(entityHit is BoxEntity) {
                         SplitBox((BoxEntity)entityHit);
