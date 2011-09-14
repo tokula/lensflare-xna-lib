@@ -9,29 +9,25 @@ using LensflareGameFramework;
 namespace EngineTest {
     class Creator : GameEntity {
         protected Shape3D.Sphere visualSphere;
-        protected BEPUphysics.Entities.Prefabs.Sphere physicsSphere;
 
-        public Vector3 Position { get { return physicsSphere.Position; } }
-        public Vector3 Velocity { get { return physicsSphere.LinearVelocity; } set { physicsSphere.LinearVelocity = value; } }
-        public Vector3 AngularVelocity { get { return physicsSphere.AngularVelocity; } set { physicsSphere.AngularVelocity = value; } }
+        public Vector3 Position { get { return physicsEntities[0].Position; } }
+        public Vector3 Velocity { get { return physicsEntities[0].LinearVelocity; } set { physicsEntities[0].LinearVelocity = value; } }
+        public Vector3 AngularVelocity { get { return physicsEntities[0].AngularVelocity; } set { physicsEntities[0].AngularVelocity = value; } }
 
         public Creator(Game1 game, Vector3 position, float radius, float mass, Texture2D texture) : base(game, texture) {
             visualSphere = new Shape3D.Sphere(game, radius, 128, 128);
 			if (mass < 0) {
-                physicsSphere = new BEPUphysics.Entities.Prefabs.Sphere(position, radius);
+                physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));
 			} else {
-                physicsSphere = new BEPUphysics.Entities.Prefabs.Sphere(position, radius, mass);
+                physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius, mass));
 			}
-            physicsSphere.LinearDamping = 0.5f;
-            physicsSphere.CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
-            game.space.Add(physicsSphere);
+            physicsEntities[0].LinearDamping = 0.5f;
+            physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
+            game.space.Add(physicsEntities[0]);
 		}
 
         protected override void Dispose() {
-            physicsSphere.CollisionInformation.Events.RemoveAllEvents();
-            Game.space.Remove(physicsSphere);
             visualSphere = null;
-            physicsSphere = null;
             base.Dispose();
         }
 
@@ -40,7 +36,7 @@ namespace EngineTest {
         }
 
 		public override void Draw() {
-            DrawShape(physicsSphere.WorldTransform, visualSphere);
+            DrawShape(physicsEntities[0].WorldTransform, visualSphere);
 		}
     }
 }
