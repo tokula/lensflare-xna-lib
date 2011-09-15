@@ -19,6 +19,8 @@ namespace EngineTest {
                 physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Box(position, physicalSize.X, physicalSize.Y, physicalSize.Z, mass));
 			}
             physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
+            physicsEntities[0].LinearDamping = 0;
+            physicsEntities[0].AngularDamping = 0;
             game.space.Add(physicsEntities[0]);
 		}
 
@@ -29,7 +31,7 @@ namespace EngineTest {
 
 		public override void Update(GameTime gameTime) {
             foreach (var e in physicsEntities) {
-                if (e.Position.Y < -100) {
+                if (e.Position.Y < -1000) {
                     Entity.Remove(this);
                     return;
                 }

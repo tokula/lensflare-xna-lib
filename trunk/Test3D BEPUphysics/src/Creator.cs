@@ -21,7 +21,9 @@ namespace EngineTest {
 			} else {
                 physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius, mass));
 			}
-            physicsEntities[0].LinearDamping = 0.5f;
+            //physicsEntities[0].LinearDamping = 0.5f;
+            physicsEntities[0].LinearDamping = 0;
+            physicsEntities[0].AngularDamping = 0;
             physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
             game.space.Add(physicsEntities[0]);
 		}
