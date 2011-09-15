@@ -122,6 +122,7 @@
     <Compile Include="src\Creator.cs" />
     <Compile Include="src\GameEntity.cs" />
     <Compile Include="src\GroundEntity.cs" />
+    <Compile Include="src\ForceEntity.cs" />
     <Compile Include="src\SphereEntity.cs" />
     <Compile Include="src\BoxEntity.cs" />
     <Compile Include="src\ArrowEntity.cs" />
