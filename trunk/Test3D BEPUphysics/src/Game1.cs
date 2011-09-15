@@ -38,7 +38,7 @@ namespace EngineTest {
         Dictionary<IntVector2, Tile> tiles = new Dictionary<IntVector2, Tile>();
 
         Creator creator;
-        bool wasdForCamera = false;
+        bool freeCamera = false;
 
 		public Game1() {
 			graphics = new GraphicsDeviceManager(this);
@@ -183,7 +183,7 @@ namespace EngineTest {
 
             Matrix cameraRotationMatrix = camera.CalcRotationMatrix();
 
-            if (wasdForCamera) {
+            if (freeCamera) {
                 //camera controls:
                 if (Keyboard.GetState().IsKeyDown(Keys.S)) {
                     camera.Velocity -= cameraRotationMatrix.Forward * cameraMovementSpeed;
@@ -239,19 +239,31 @@ namespace EngineTest {
             }
 
             if (Input.MousePressed(Input.MouseButton.RightButton)) {
-                Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
+                if (freeCamera) {
+                    Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
 
-                if (entityHit != null) {
-                    if (entityHit is BoxEntity || entityHit is SphereEntity) {
-                        Entity.Remove(entityHit);
+                    if (entityHit != null) {
+                        if (entityHit is BoxEntity || entityHit is SphereEntity || entityHit is ForceEntity) {
+                            Entity.Remove(entityHit);
+                        } else if (entityHit is Tile) {
+                            Tile tile = (Tile)entityHit;
+                            float r = 0.25f;
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + r, 0), r, engine.ColorToTexture(Color.DarkRed), -1.5f));
+                        }
                     }
                 }
             }
             if (Input.MousePressed(Input.MouseButton.LeftButton)) {
-                Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
-                if (entityHit != null) {
-                    if(entityHit is BoxEntity) {
-                        SplitBox((BoxEntity)entityHit);
+                if (freeCamera) {
+                    Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
+                    if (entityHit != null) {
+                        if (entityHit is BoxEntity) {
+                            SplitBox((BoxEntity)entityHit);
+                        } else if(entityHit is Tile) {
+                            Tile tile = (Tile)entityHit;
+                            float r = 0.25f;
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position+new Vector3(0,Tile.Size.Y+r,0), r, engine.ColorToTexture(Color.Green), 1.5f));
+                        }
                     }
                 }
             }
@@ -280,8 +292,8 @@ namespace EngineTest {
                 noteSound[random.Next(7)].Play();
             }
 
-            if (Input.KeyboardPressed(Keys.G)) {
-                wasdForCamera = !wasdForCamera;
+            if (Input.KeyboardPressed(Keys.G) || Input.MousePressed(Input.MouseButton.MiddleButton)) {
+                freeCamera = !freeCamera;
             }
         }
 
@@ -423,7 +435,7 @@ namespace EngineTest {
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             spriteBatch.Begin();
             spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
-            if (wasdForCamera) {
+            if (freeCamera) {
                 Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
                 Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
                 Primitive2D.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
@@ -448,7 +460,7 @@ namespace EngineTest {
             rayHit.T = minDist;
             Ray ray = new Ray(position, direction);
             foreach (Entity entity in Entity.All) {
-                if(entity is GameEntity) {
+                if(entity is GameEntity) { //TODO: nicht nötig sobald GameEntity in Entity integirert ist
                     GameEntity ge = (GameEntity)entity;
                     foreach(var physicsEntity in ge.PhysicsEntities) {
                         physicsEntity.CollisionInformation.RayCast(ray, float.PositiveInfinity, out rayHit);
