@@ -95,7 +95,7 @@ namespace EngineTest {
             defaultFont = Content.Load<SpriteFont>("defaultFont");
 
             space = new Space();
-            space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
+            //space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
 
             //float groundThickness = 0.05f;
 
@@ -107,6 +107,9 @@ namespace EngineTest {
             //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
             creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
             Entity.Add(creator);
+
+            float planetRadius = 8.0f;
+            Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, Content.Load<Texture2D>("ground"), 20.0f));
 		}
 
 		/// <summary>
@@ -224,7 +227,6 @@ namespace EngineTest {
             }
             if (Keyboard.GetState().IsKeyDown(Keys.O)) {
                 Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-                //Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, TextureFromColor(Color.Orange)));
             }
 
             if (Input.KeyboardPressed(Keys.X)) {
@@ -237,7 +239,18 @@ namespace EngineTest {
                 et.PhysicsEntities[0].LinearVelocity = cameraRotationMatrix.Forward * 10.0f;
                 Entity.Add(et);
             }
+            if (Input.KeyboardPressing(Keys.V)) {
+                int colorMin = 150;
+                int colorMax = 255;
+                Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
+                float size = 0.02f + 0.1f * (float)random.NextDouble();
+                var et = new BoxEntity(this, new Vector3(13, 0, 0), new Vector3(1, 1, 1) * size, size, engine.ColorToTexture(color));
+                //var et = new ForceEntity(this, camera.Position, 0.1f, 0.5f, engine.ColorToTexture(color), 0.001f);
+                et.PhysicsEntities[0].LinearVelocity = Vector3.Forward * 10.0f;
+                Entity.Add(et);
+            }
 
+            float forceEntityRadius = 0.25f;
             if (Input.MousePressed(Input.MouseButton.RightButton)) {
                 if (freeCamera) {
                     Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
@@ -247,22 +260,26 @@ namespace EngineTest {
                             Entity.Remove(entityHit);
                         } else if (entityHit is Tile) {
                             Tile tile = (Tile)entityHit;
-                            float r = 0.25f;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + r, 0), r, engine.ColorToTexture(Color.DarkRed), -1.5f));
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, engine.ColorToTexture(Color.DarkRed), -1.5f));
                         }
                     }
                 }
             }
             if (Input.MousePressed(Input.MouseButton.LeftButton)) {
                 if (freeCamera) {
-                    Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward);
+                    RayHit rayHit;
+                    Entity entityHit = GetEntityFromRay(camera.Position, cameraRotationMatrix.Forward, out rayHit);
                     if (entityHit != null) {
                         if (entityHit is BoxEntity) {
                             SplitBox((BoxEntity)entityHit);
                         } else if(entityHit is Tile) {
-                            Tile tile = (Tile)entityHit;
-                            float r = 0.25f;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position+new Vector3(0,Tile.Size.Y+r,0), r, engine.ColorToTexture(Color.Green), 1.5f));
+                            var tile = (Tile)entityHit;
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, engine.ColorToTexture(Color.Green), 1.5f));
+                        } else if (entityHit is ForceEntity) {
+                            var e = (ForceEntity)entityHit;
+                            Vector3 hitPos = rayHit.Location;
+                            Vector3 n = Vector3.Normalize(hitPos - e.Position);
+                            Entity.Add(new ForceEntity(this, hitPos + n * forceEntityRadius, forceEntityRadius, -1, engine.ColorToTexture(Color.Green), 0.5f));
                         }
                     }
                 }
@@ -385,28 +402,30 @@ namespace EngineTest {
 
                 ProcessInput(gameTime);
 
-                //create tiles:
-                float tileExistenceRadiusF = 1.25f;
-                int tileExistenceRadiusI = (int)(tileExistenceRadiusF + 3);
-                Vector3 creatorPos = creator.Position;
-                IntVector2 creatorTilePos = new IntVector2((int)creatorPos.X, (int)creatorPos.Z);
-                //float offsetX = creatorPos.X - creatorTilePos.X * Tile.Size.X * 2;
-                //float offsetZ = creatorPos.Z - creatorTilePos.Y * Tile.Size.Z * 2;
-                for (int x = -tileExistenceRadiusI; x <= tileExistenceRadiusI; ++x) {
-                    for (int z = -tileExistenceRadiusI; z <= tileExistenceRadiusI; ++z) {
-                        IntVector2 pickedPoint = new IntVector2(x + creatorTilePos.X, z + creatorTilePos.Y);
-                        float xDist = (creatorPos.X - pickedPoint.X * Tile.Size.X * 2);
-                        float zDist = (creatorPos.Z - pickedPoint.Y * Tile.Size.Z * 2);
-                        float dist = (float)Math.Sqrt(xDist * xDist + zDist * zDist);
-                        if (dist <= tileExistenceRadiusF) {
-                            if (!tiles.ContainsKey(pickedPoint)) {
-                                int colorMin = 150;
-                                int colorMax = 255;
-                                Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax)*0);
-                                Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X*2, 1, pickedPoint.Y * Tile.Size.Z*2), engine.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
-                                Entity.Add(tile);
-                                tiles.Add(pickedPoint, tile);
-                                //noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
+                bool createTiles = false;
+                if (createTiles) {
+                    float tileExistenceRadiusF = 1.25f;
+                    int tileExistenceRadiusI = (int)(tileExistenceRadiusF + 3);
+                    Vector3 creatorPos = creator.Position;
+                    IntVector2 creatorTilePos = new IntVector2((int)creatorPos.X, (int)creatorPos.Z);
+                    //float offsetX = creatorPos.X - creatorTilePos.X * Tile.Size.X * 2;
+                    //float offsetZ = creatorPos.Z - creatorTilePos.Y * Tile.Size.Z * 2;
+                    for (int x = -tileExistenceRadiusI; x <= tileExistenceRadiusI; ++x) {
+                        for (int z = -tileExistenceRadiusI; z <= tileExistenceRadiusI; ++z) {
+                            IntVector2 pickedPoint = new IntVector2(x + creatorTilePos.X, z + creatorTilePos.Y);
+                            float xDist = (creatorPos.X - pickedPoint.X * Tile.Size.X * 2);
+                            float zDist = (creatorPos.Z - pickedPoint.Y * Tile.Size.Z * 2);
+                            float dist = (float)Math.Sqrt(xDist * xDist + zDist * zDist);
+                            if (dist <= tileExistenceRadiusF) {
+                                if (!tiles.ContainsKey(pickedPoint)) {
+                                    int colorMin = 150;
+                                    int colorMax = 255;
+                                    Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
+                                    Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X * 2, 1, pickedPoint.Y * Tile.Size.Z * 2), engine.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
+                                    Entity.Add(tile);
+                                    tiles.Add(pickedPoint, tile);
+                                    //noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
+                                }
                             }
                         }
                     }
@@ -463,11 +482,13 @@ namespace EngineTest {
                 if(entity is GameEntity) { //TODO: nicht nötig sobald GameEntity in Entity integirert ist
                     GameEntity ge = (GameEntity)entity;
                     foreach(var physicsEntity in ge.PhysicsEntities) {
-                        physicsEntity.CollisionInformation.RayCast(ray, float.PositiveInfinity, out rayHit);
-                        float dist = rayHit.T;
+                        RayHit trh;
+                        physicsEntity.CollisionInformation.RayCast(ray, float.PositiveInfinity, out trh);
+                        float dist = trh.T;
                         if (dist > 0.0f) {
                             if (dist < minDist) {
                                 minDist = dist;
+                                rayHit = trh;
                                 entityHit = entity;
                             }
                         }
@@ -476,6 +497,8 @@ namespace EngineTest {
             }
             return entityHit;
         }
+
+        //TODO: Entity from mouse cursor on screen
 
         public static Entity GetEntityFromRay(Vector3 position, Vector3 direction) {
             RayHit rayHit;

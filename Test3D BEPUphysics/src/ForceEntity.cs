@@ -10,12 +10,20 @@ namespace EngineTest {
     class ForceEntity : GameEntity {
 		protected Shape3D.Sphere visualSphere;
         public float Force { get; set; }
+        public Vector3 Position { get { return physicsEntities[0].Position; } }
+        public float Radius { get { return ((BEPUphysics.Entities.Prefabs.Sphere)physicsEntities[0]).Radius; } }
 
-        public ForceEntity(Game1 game, Vector3 position, float radius, Texture2D texture, float force) : base(game, texture) {
+        public ForceEntity(Game1 game, Vector3 position, float radius, float mass, Texture2D texture, float force) : base(game, texture) {
             visualSphere = new Shape3D.Sphere(game, radius, 64, 64);
             Force = force;
-            physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));
+            if (mass < 0) {
+                physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));
+            } else {
+                physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius, mass));
+            }
             physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
+            physicsEntities[0].LinearDamping = 0;
+            physicsEntities[0].AngularDamping = 0;
             game.space.Add(physicsEntities[0]);
 		}
 
@@ -27,13 +35,15 @@ namespace EngineTest {
 		public override void Update(GameTime gameTime) {
             foreach (var entity in Entity.All) {
                 if (entity != this) {
-                    if (entity is Creator) {
-                        var e = (Creator)entity;
+                    if (entity is GameEntity) {
+                        var e = (GameEntity)entity;
                         foreach(var physicsEntity in e.PhysicsEntities) {
-                            Vector3 posDiff = this.physicsEntities[0].Position - physicsEntity.Position;
-                            float distanceSquared = posDiff.LengthSquared();
-                            posDiff.Normalize();
-                            physicsEntity.LinearVelocity += posDiff / (distanceSquared * Force);
+                            if (physicsEntity.IsDynamic) {
+                                Vector3 posDiff = this.physicsEntities[0].Position - physicsEntity.Position;
+                                float distanceSquared = posDiff.LengthSquared();
+                                posDiff.Normalize();
+                                physicsEntity.LinearVelocity += Force * (posDiff / distanceSquared);
+                            }
                         }
                     }
                 }
