@@ -20,6 +20,7 @@ namespace EngineTest {
 	class Game1 : Microsoft.Xna.Framework.Game {
 		public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
+        public ProceduralTexture proceduralTexture;
 
         public Engine engine;
         public Space space;
@@ -39,6 +40,7 @@ namespace EngineTest {
 
         Creator creator;
         bool freeCamera = false;
+        bool planeGround = true;
 
 		public Game1() {
 			graphics = new GraphicsDeviceManager(this);
@@ -58,7 +60,7 @@ namespace EngineTest {
             graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            Window.Title = "XNA 3D Graphics with BEPUphysics";
+            proceduralTexture = new ProceduralTexture(this.GraphicsDevice);
 
             engine = new Engine(this);
             engine.Initialize();
@@ -95,21 +97,26 @@ namespace EngineTest {
             defaultFont = Content.Load<SpriteFont>("defaultFont");
 
             space = new Space();
-            //space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
+            if (planeGround) {
+                space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
+            }
 
-            //float groundThickness = 0.05f;
+            if (planeGround) {
+                float groundThickness = 0.05f;
+                Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, Content.Load<Texture2D>("ground")));
+            } else {
+                float planetRadius = 8.0f;
+                Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, Content.Load<Texture2D>("ground"), 20.0f));
+            }
 
             //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
             //Entity.Add(new BoxEntity(this, new Vector3(0, 5, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
             //Entity.Add(new SphereEntity(this, new Vector3(0, 5, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-            lightArrow = new ArrowEntity(this, new Vector3(0, 1, 0), new Vector3(1, 1, 1), true, engine.ColorToTexture(Color.Green));
+            lightArrow = new ArrowEntity(this, new Vector3(0, 1, 0), new Vector3(1, 1, 1), true, proceduralTexture.ColorToTexture(Color.Green));
             Entity.Add(lightArrow);
             //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
             creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
             Entity.Add(creator);
-
-            float planetRadius = 8.0f;
-            Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, Content.Load<Texture2D>("ground"), 20.0f));
 		}
 
 		/// <summary>
@@ -219,11 +226,7 @@ namespace EngineTest {
             }
 
             if (Input.KeyboardPressed(Keys.K) || Keyboard.GetState().IsKeyDown(Keys.L)) {
-                if (random.Next(1000) < 10) {
-                    Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("tits")));
-                } else {
-                    Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-                }
+                Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, proceduralTexture.Test(512, 512)));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.O)) {
                 Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
@@ -244,7 +247,7 @@ namespace EngineTest {
                 int colorMax = 255;
                 Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
                 float size = 0.02f + 0.1f * (float)random.NextDouble();
-                var et = new BoxEntity(this, new Vector3(13, 0, 0), new Vector3(1, 1, 1) * size, size, engine.ColorToTexture(color));
+                var et = new BoxEntity(this, new Vector3(13, 0, 0), new Vector3(1, 1, 1) * size, size, proceduralTexture.ColorToTexture(color));
                 //var et = new ForceEntity(this, camera.Position, 0.1f, 0.5f, engine.ColorToTexture(color), 0.001f);
                 et.PhysicsEntities[0].LinearVelocity = Vector3.Forward * 10.0f;
                 Entity.Add(et);
@@ -260,7 +263,7 @@ namespace EngineTest {
                             Entity.Remove(entityHit);
                         } else if (entityHit is Tile) {
                             Tile tile = (Tile)entityHit;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, engine.ColorToTexture(Color.DarkRed), -1.5f));
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.DarkRed), -1.5f));
                         }
                     }
                 }
@@ -274,12 +277,12 @@ namespace EngineTest {
                             SplitBox((BoxEntity)entityHit);
                         } else if(entityHit is Tile) {
                             var tile = (Tile)entityHit;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, engine.ColorToTexture(Color.Green), 1.5f));
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.Green), 1.5f));
                         } else if (entityHit is ForceEntity) {
                             var e = (ForceEntity)entityHit;
                             Vector3 hitPos = rayHit.Location;
                             Vector3 n = Vector3.Normalize(hitPos - e.Position);
-                            Entity.Add(new ForceEntity(this, hitPos + n * forceEntityRadius, forceEntityRadius, -1, engine.ColorToTexture(Color.Green), 0.5f));
+                            Entity.Add(new ForceEntity(this, hitPos + n * forceEntityRadius, forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.Green), 0.5f));
                         }
                     }
                 }
@@ -317,76 +320,78 @@ namespace EngineTest {
         protected void SplitBox(BoxEntity box) {
             var e = box.PhysicsEntities[0];
             if (e is BEPUphysics.Entities.Prefabs.Box) {
-                BEPUphysics.Entities.Prefabs.Box physicsBox = (BEPUphysics.Entities.Prefabs.Box)e;
-                float t = physicsBox.Length / 4;
-                if (t > 0.01f) {
-                    Entity.Remove(box);
+                var physicsBox = (BEPUphysics.Entities.Prefabs.Box)e;
+                if (physicsBox.IsDynamic) {
+                    float t = physicsBox.Length / 4;
+                    if (t > 0.01f) {
+                        Entity.Remove(box);
 
-                    Vector3 size = new Vector3(physicsBox.Length / 4, physicsBox.Height / 4, physicsBox.Width / 4);
+                        Vector3 size = new Vector3(physicsBox.Length / 4, physicsBox.Height / 4, physicsBox.Width / 4);
 
-                    Matrix eWorldMatrix = physicsBox.WorldTransform;
-                    Matrix3X3 eom = physicsBox.OrientationMatrix;
-                    float mass = physicsBox.Mass / 8;
+                        Matrix eWorldMatrix = physicsBox.WorldTransform;
+                        Matrix3X3 eom = physicsBox.OrientationMatrix;
+                        float mass = physicsBox.Mass / 8;
 
-                    BEPUphysics.Entities.Prefabs.Box tpb;
-                    
-                    BoxEntity eFrontUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpRight.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Up * t + eom.Right * t + eom.Forward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eFrontUpRight);
+                        BEPUphysics.Entities.Prefabs.Box tpb;
 
-                    BoxEntity eFrontUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpLeft.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Up * t + eom.Left * t + eom.Forward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eFrontUpLeft);
+                        BoxEntity eFrontUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpRight.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Up * t + eom.Right * t + eom.Forward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eFrontUpRight);
 
-                    BoxEntity eFrontDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownRight.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Down * t + eom.Right * t + eom.Forward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eFrontDownRight);
+                        BoxEntity eFrontUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontUpLeft.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Up * t + eom.Left * t + eom.Forward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eFrontUpLeft);
 
-                    BoxEntity eFrontDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownLeft.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Down * t + eom.Left * t + eom.Forward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eFrontDownLeft);
+                        BoxEntity eFrontDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownRight.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Down * t + eom.Right * t + eom.Forward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eFrontDownRight);
 
-                    BoxEntity eBackUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpRight.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Up * t + eom.Right * t + eom.Backward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eBackUpRight);
+                        BoxEntity eFrontDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eFrontDownLeft.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Down * t + eom.Left * t + eom.Forward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eFrontDownLeft);
 
-                    BoxEntity eBackUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpLeft.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Up * t + eom.Left * t + eom.Backward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eBackUpLeft);
+                        BoxEntity eBackUpRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpRight.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Up * t + eom.Right * t + eom.Backward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eBackUpRight);
 
-                    BoxEntity eBackDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownRight.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Down * t + eom.Right * t + eom.Backward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eBackDownRight);
+                        BoxEntity eBackUpLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eBackUpLeft.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Up * t + eom.Left * t + eom.Backward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eBackUpLeft);
 
-                    BoxEntity eBackDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
-                    tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownLeft.PhysicsEntities[0];
-                    tpb.WorldTransform = eWorldMatrix;
-                    tpb.Position += eom.Down * t + eom.Left * t + eom.Backward * t;
-                    tpb.LinearVelocity = physicsBox.LinearVelocity;
-                    Entity.Add(eBackDownLeft);
+                        BoxEntity eBackDownRight = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownRight.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Down * t + eom.Right * t + eom.Backward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eBackDownRight);
 
-                    tpb = null;
+                        BoxEntity eBackDownLeft = new BoxEntity(this, new Vector3(0, 0, 0), size, mass, box.Texture);
+                        tpb = (BEPUphysics.Entities.Prefabs.Box)eBackDownLeft.PhysicsEntities[0];
+                        tpb.WorldTransform = eWorldMatrix;
+                        tpb.Position += eom.Down * t + eom.Left * t + eom.Backward * t;
+                        tpb.LinearVelocity = physicsBox.LinearVelocity;
+                        Entity.Add(eBackDownLeft);
+
+                        tpb = null;
+                    }
                 }
             }
         }
@@ -421,7 +426,7 @@ namespace EngineTest {
                                     int colorMin = 150;
                                     int colorMax = 255;
                                     Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
-                                    Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X * 2, 1, pickedPoint.Y * Tile.Size.Z * 2), engine.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
+                                    Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X * 2, 1, pickedPoint.Y * Tile.Size.Z * 2), proceduralTexture.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
                                     Entity.Add(tile);
                                     tiles.Add(pickedPoint, tile);
                                     //noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
@@ -431,9 +436,11 @@ namespace EngineTest {
                     }
                 }
 
+                lightArrow.position = Vector3.Normalize(debugVector); //TODO: man sieht nichts.
+
                 camera.Update(gameTime);
                 space.Update(elapsedSeconds);
-                engine.Update(gameTime); 
+                engine.Update(gameTime);
 			}
 
 			base.Update(gameTime);
@@ -448,12 +455,16 @@ namespace EngineTest {
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            engine.Draw();
+            engine.Draw(gameTime);
 
             //hud:
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             spriteBatch.Begin();
             spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
+
+            String fpsString = "FPS: " + engine.Fps;
+            Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
+            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
             if (freeCamera) {
                 Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
                 Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);

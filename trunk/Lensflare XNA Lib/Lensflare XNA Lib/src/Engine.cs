@@ -28,9 +28,11 @@ namespace LensflareGameFramework {
 
     //TODO: projekt als lib
 
+    //TODO: FPS counter
+
     public class Engine {
         //TODO: properties
-
+        
         RenderTarget2D renderTarget;
         Random random = new Random();
         Vector3 debugVector = Vector3.Zero;
@@ -45,14 +47,25 @@ namespace LensflareGameFramework {
         public Vector3 lightPos = new Vector3(0, 10.0f, 0);
         public Matrix lightsViewProjectionMatrix;
 
+        protected float timeSinceLastFpsUpdate;
+        protected int framesSinceLastFpsUpdate;
+        public float Fps { get; protected set; }
+        public float FpsUpdateDelay { get; set; }
+
         //TODO: auch set
         public int ScreenWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
         public int ScreenHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
 
         //TODO: Constructor(), Initialize(), Load() evtl. zusammenfassen
 
+        //TODO: verschieben zu einer zentralen stelle
+        public static int GetEnumLength<T>() {
+            return Enum.GetNames(typeof(T)).Length;
+        }
+
         public Engine(Game game) {
             Game = game;
+            FpsUpdateDelay = 0.5f;
         }
 
         public void Initialize() {
@@ -108,7 +121,16 @@ namespace LensflareGameFramework {
             //lightArrow.direction = /*Vector3.Normalize(new Vector3(-1, -1, -1));*/camera.rotationMatrix.Forward;
         }
 
-        public void Draw() {
+        public void Draw(GameTime gameTime) {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timeSinceLastFpsUpdate += elapsedSeconds;
+            framesSinceLastFpsUpdate += 1;
+            if (timeSinceLastFpsUpdate >= FpsUpdateDelay) {
+                timeSinceLastFpsUpdate -= FpsUpdateDelay;
+                Fps = (int)(framesSinceLastFpsUpdate / FpsUpdateDelay);
+                framesSinceLastFpsUpdate = 0;
+            }
+
             Game.GraphicsDevice.SetRenderTarget(renderTarget);
 
             Game.GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -137,16 +159,6 @@ namespace LensflareGameFramework {
 
         private void CenterMouseCursor() {
             Mouse.SetPosition(ScreenWidth / 2, ScreenHeight / 2);
-        }
-
-        public static String VectorToString(Vector3 v) {
-            return "(" + v.X.ToString("0.00") + " | " + v.Y.ToString("0.00") + " | " + v.Z.ToString("0.00") + ")";
-        }
-
-        public Texture2D ColorToTexture(Color color) {
-            Texture2D texture = new Texture2D(Game.GraphicsDevice, 1, 1);
-            texture.SetData<Color>(new Color[] { color });
-            return texture;
         }
 
         public static void DirectionToRotationMatrix(ref Vector3 direction, out Matrix m) {
