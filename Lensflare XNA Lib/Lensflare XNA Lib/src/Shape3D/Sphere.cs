@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using VertexFormat = Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture;
-//using VertexFormat = Test3D.MyOwnVertexFormat;
 
 namespace Shape3D {
     public class Sphere : Shape { //TODO: level of detail

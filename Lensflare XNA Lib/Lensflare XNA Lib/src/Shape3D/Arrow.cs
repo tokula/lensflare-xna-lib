@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 using VertexFormat = Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture; //TODO: ändern
-using Microsoft.Xna.Framework;
 
 namespace Shape3D {
     public class Arrow : Shape {
@@ -18,7 +18,7 @@ namespace Shape3D {
 			this.game = game;
             VertexFormat[] vertices = new VertexFormat[NumVertices];
 
-			Vector3 top = new Vector3( 0.0f,  1.0f,  0.0f) * size;
+			Vector3 top = new Vector3(0.0f, 1.0f, 0.0f) * size;
             Vector3 bottom = new Vector3(0.0f, 0.0f, 0.0f) * size;
 
             int i = 0;

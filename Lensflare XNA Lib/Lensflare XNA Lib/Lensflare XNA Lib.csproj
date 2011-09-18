@@ -111,6 +111,7 @@
     <Compile Include="src\Entity.cs" />
     <Compile Include="src\Engine.cs" />
     <Compile Include="src\Program.cs" />
+    <Compile Include="src\Shape3D\SquarePyramid.cs" />
     <Compile Include="src\Shape3D\Quad.cs" />
     <Compile Include="src\Util\Camera.cs" />
     <Compile Include="src\Util\Input.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="src\Shape3D\Shape.cs" />
     <Compile Include="src\Shape3D\Sphere.cs" />
     <Compile Include="src\Shape3D\Tetrahedron.cs" />
+    <Compile Include="src\Util\ProceduralTexture.cs" />
     <Compile Include="src\Util\SmoothCamera.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -37,7 +37,7 @@ namespace Util {
             */
 
             view = Matrix.CreateLookAt(position, finalTarget, rotatedUpVector);
-            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), aspectRatio, 0.001f, 1000.0f); //TODO: device.Viewport.AspectRatio
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f), aspectRatio, 0.001f, 1000000.0f); //TODO: device.Viewport.AspectRatio
         }
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 using VertexFormat = Microsoft.Xna.Framework.Graphics.VertexPositionNormalTexture;
-//using VertexFormat = Test3D.MyOwnVertexFormat;
 
 namespace Shape3D {
     public class Tetrahedron : Shape {
