@@ -85,6 +85,7 @@ namespace LensflareGameFramework {
             rasterizerState.CullMode = CullMode.CullCounterClockwiseFace;
             rasterizerState.MultiSampleAntiAlias = true;
             Game.GraphicsDevice.RasterizerState = rasterizerState;
+            //Game.GraphicsDevice.BlendState = BlendState.Additive; //TODO: texturen mit alpha 0.5 sind trotzdem nicht transparent
 
             //effect = new BasicEffect(GraphicsDevice);
             Effect = Game.Content.Load<Effect>("TestEffect");
@@ -107,14 +108,14 @@ namespace LensflareGameFramework {
         private void UpdateLight() {
             //Matrix lightsView = Matrix.CreateLookAt(lightPos, lightDirection, new Vector3(0, 1, 0));
             //Matrix lightsView = camera.view;
-            Matrix lightsView = Matrix.CreateLookAt(debugVector, new Vector3(0.1f, 0, 0), new Vector3(0, 1, 0));
+            Matrix lightsView = Matrix.CreateLookAt(lightPos, lightPos + Vector3.Normalize(lightDirection), new Vector3(0, 1, 0));
 
-            //float fov = MathHelper.PiOver2;
+            float fov = MathHelper.PiOver2;
             //float fov = MathHelper.Pi * 0.1f;
-            //Matrix lightsProjection = Matrix.CreatePerspectiveFieldOfView(fov, 1.0f, 1.0f, 100000.0f);
+            Matrix lightsProjection = Matrix.CreatePerspectiveFieldOfView(fov, 1.0f, 0.1f, 1000.0f);
 
-            Matrix lightsProjection;
-            Matrix.CreateOrthographic(100, 100, 1.0f, 100.0f, out lightsProjection);
+            //Matrix lightsProjection;
+            //Matrix.CreateOrthographic(100, 100, 1.0f, 100.0f, out lightsProjection);
             lightsViewProjectionMatrix = lightsView * lightsProjection;
 
             //lightArrow.position = debugVector;
@@ -149,10 +150,10 @@ namespace LensflareGameFramework {
 
         private void DrawScene(String technique) {
             Effect.CurrentTechnique = Effect.Techniques[technique];
-            Effect.Parameters["xLightPos"].SetValue(lightPos);
-            Effect.Parameters["xLightPower"].SetValue(lightPower);
-            Effect.Parameters["xAmbient"].SetValue(ambientPower);
-            Effect.Parameters["xShadowMap"].SetValue(ShadowMap);
+            Effect.Parameters["LightPos"].SetValue(lightPos);
+            Effect.Parameters["LightPower"].SetValue(lightPower);
+            Effect.Parameters["Ambient"].SetValue(ambientPower);
+            Effect.Parameters["shadowMap"].SetValue(ShadowMap);
 
             Entity.DrawAll();
         }

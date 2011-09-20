@@ -54,7 +54,7 @@ namespace EngineTest {
             } else {
                 //arrow bar:
                 Engine.DirectionToRotationMatrix(ref direction, out rotMatrix);
-                DrawShape(Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * 0.5f + length * tipSizeFactor * 4 : length * -0.5f) * rotMatrix * Matrix.CreateTranslation(position), bar);
+                DrawShape(Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * 0.5f + length * tipSizeFactor * 2.1f : length * -0.5f) * rotMatrix * Matrix.CreateTranslation(position), bar);
 
                 //arrow tip:
                 Matrix tipRotation;
@@ -62,44 +62,7 @@ namespace EngineTest {
                 Vector3 axis = new Vector3(-1, -1, 0);
                 Matrix.CreateFromAxisAngle(ref axis, a, out tipRotation);
                 Engine.DirectionToRotationMatrix(ref direction, out rotMatrix);
-                DrawShape(tipRotation * Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * tipSizeFactor * 4 : -length) * rotMatrix * Matrix.CreateTranslation(position), tip);
-
-
-                /* TODO: remove after test
-                Matrix worldMatrix;
-                Matrix rotMatrix;
-
-                //arrow bar:
-                game.engine.RotationMatrixFromDirection(ref direction, out rotMatrix);
-                worldMatrix = Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * 0.5f + length * tipSizeFactor*4 : length * -0.5f) * rotMatrix * Matrix.CreateTranslation(position);
-                effect.Parameters["xWorldViewProjection"].SetValue(worldMatrix * game.camera.view * game.camera.projection);
-                effect.Parameters["xTexture"].SetValue(texture);
-                effect.Parameters["xWorld"].SetValue(worldMatrix);
-                effect.Parameters["xLightsWorldViewProjection"].SetValue(worldMatrix * game.engine.lightsViewProjectionMatrix);
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
-                    pass.Apply();
-                    bar.Draw();
-                }
-
-                //arrow tip:
-                Matrix tipRotation;
-                float a = (float)Math.PI / 4.0f;
-                Vector3 axis = new Vector3(-1, -1, 0);
-                Matrix.CreateFromAxisAngle(ref axis, a, out tipRotation);
-
-                game.engine.RotationMatrixFromDirection(ref direction, out rotMatrix);
-                worldMatrix = tipRotation * Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * tipSizeFactor*4 : -length) * rotMatrix * Matrix.CreateTranslation(position);
-                effect.Parameters["xWorldViewProjection"].SetValue(worldMatrix * game.camera.view * game.camera.projection);
-                effect.Parameters["xTexture"].SetValue(texture);
-                effect.Parameters["xWorld"].SetValue(worldMatrix);
-                effect.Parameters["xLightsWorldViewProjection"].SetValue(worldMatrix * game.engine.lightsViewProjectionMatrix);
-
-                foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
-                    pass.Apply();
-                    tip.Draw();
-                }
-                */
+                DrawShape(tipRotation * Matrix.CreateTranslation(0, 0, tipIsOrigin ? length * tipSizeFactor * 2.1f : -length) * rotMatrix * Matrix.CreateTranslation(position), tip);
             }
         }
     }

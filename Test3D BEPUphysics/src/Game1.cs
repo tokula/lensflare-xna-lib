@@ -112,7 +112,7 @@ namespace EngineTest {
             //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
             //Entity.Add(new BoxEntity(this, new Vector3(0, 5, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
             //Entity.Add(new SphereEntity(this, new Vector3(0, 5, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-            lightArrow = new ArrowEntity(this, new Vector3(0, 1, 0), new Vector3(1, 1, 1), true, proceduralTexture.ColorToTexture(Color.Green));
+            lightArrow = new ArrowEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1), true, proceduralTexture.ColorToTexture(new Color(1.0f, 0.5f, 0.0f, 0.5f)));
             Entity.Add(lightArrow);
             //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
             creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
@@ -226,7 +226,7 @@ namespace EngineTest {
             }
 
             if (Input.KeyboardPressed(Keys.K) || Keyboard.GetState().IsKeyDown(Keys.L)) {
-                Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, proceduralTexture.Test(512, 512)));
+                Entity.Add(new BoxEntity(this, new Vector3(0, 2, 0), new Vector3(1, 1, 1) * 0.5f, 1, proceduralTexture.Test(1024, 1024)));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.O)) {
                 Entity.Add(new SphereEntity(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
@@ -436,7 +436,11 @@ namespace EngineTest {
                     }
                 }
 
-                lightArrow.position = Vector3.Normalize(debugVector); //TODO: man sieht nichts.
+                engine.lightPos = debugVector;
+                //engine.lightDirection = 
+
+                lightArrow.position = engine.lightPos;
+                lightArrow.direction = Vector3.Normalize(engine.lightDirection);
 
                 camera.Update(gameTime);
                 space.Update(elapsedSeconds);

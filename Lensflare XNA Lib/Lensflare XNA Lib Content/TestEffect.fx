@@ -1,15 +1,14 @@
-float4x4 xWorldViewProjection;
-float4x4 xLightsWorldViewProjection;
-float4x4 xWorld;
-float3 xLightPos;
-float xLightPower;
-float xAmbient;
+float4x4 WorldViewProjection;
+float4x4 LightsWorldViewProjection;
+float4x4 World;
+float3 LightPos;
+float LightPower;
+float Ambient;
 
 Texture xTexture;
 
-sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};Texture xShadowMap;
-
-sampler ShadowMapSampler = sampler_state { texture = <xShadowMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
+sampler TextureSampler = sampler_state { texture = <xTexture> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};Texture shadowMap;
+sampler ShadowMapSampler = sampler_state { texture = <shadowMap> ; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 struct VertexToPixel
 {
@@ -34,10 +33,10 @@ VertexToPixel SimplestVertexShader( float4 inPos : POSITION0, float3 inNormal: N
 {
     VertexToPixel Output = (VertexToPixel)0;
     
-    Output.Position =mul(inPos, xWorldViewProjection);
+    Output.Position =mul(inPos, WorldViewProjection);
     Output.TexCoords = inTexCoords;
-    Output.Normal = normalize(mul(inNormal, (float3x3)xWorld));    
-    Output.Position3D = mul(inPos, xWorld);
+    Output.Normal = normalize(mul(inNormal, (float3x3)World));    
+    Output.Position3D = mul(inPos, World);
 
     return Output;
 }
@@ -46,13 +45,13 @@ PixelToFrame OurFirstPixelShader(VertexToPixel PSIn)
 {
     PixelToFrame Output = (PixelToFrame)0;    
 
-    float diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+    float diffuseLightingFactor = DotProduct(LightPos, PSIn.Position3D, PSIn.Normal);
     diffuseLightingFactor = saturate(diffuseLightingFactor);
-    diffuseLightingFactor *= xLightPower;
+    diffuseLightingFactor *= LightPower;
 
     PSIn.TexCoords.y--;
     float4 baseColor = tex2D(TextureSampler, PSIn.TexCoords);
-    Output.Color = baseColor*(diffuseLightingFactor + xAmbient);
+    Output.Color = baseColor*(diffuseLightingFactor + Ambient);
 
     return Output;
 }
@@ -82,7 +81,7 @@ SMapVertexToPixel ShadowMapVertexShader( float4 inPos : POSITION)
 {
     SMapVertexToPixel Output = (SMapVertexToPixel)0;
 
-    Output.Position = mul(inPos, xLightsWorldViewProjection);
+    Output.Position = mul(inPos, LightsWorldViewProjection);
     Output.Position2D = Output.Position;
 
     return Output;
@@ -129,10 +128,10 @@ struct SScenePixelToFrame
  {
      SSceneVertexToPixel Output = (SSceneVertexToPixel)0;
  
-     Output.Position = mul(inPos, xWorldViewProjection);    
-     Output.Pos2DAsSeenByLight = mul(inPos, xLightsWorldViewProjection);    
-     Output.Normal = normalize(mul(inNormal, (float3x3)xWorld));    
-     Output.Position3D = mul(inPos, xWorld);
+     Output.Position = mul(inPos, WorldViewProjection);    
+     Output.Pos2DAsSeenByLight = mul(inPos, LightsWorldViewProjection);    
+     Output.Normal = normalize(mul(inNormal, (float3x3)World));    
+     Output.Position3D = mul(inPos, World);
      Output.TexCoords = inTexCoords;    
  
      return Output;
@@ -153,14 +152,14 @@ struct SScenePixelToFrame
          float realDistance = PSIn.Pos2DAsSeenByLight.z/PSIn.Pos2DAsSeenByLight.w;
          if ((realDistance - 1.0f/100.0f) <= depthStoredInShadowMap)
          {
-             diffuseLightingFactor = DotProduct(xLightPos, PSIn.Position3D, PSIn.Normal);
+             diffuseLightingFactor = DotProduct(LightPos, PSIn.Position3D, PSIn.Normal);
              diffuseLightingFactor = saturate(diffuseLightingFactor);
-             diffuseLightingFactor *= xLightPower;            
+             diffuseLightingFactor *= LightPower;            
          }
      }
          
      float4 baseColor = tex2D(TextureSampler, PSIn.TexCoords);                
-     Output.Color = baseColor*(diffuseLightingFactor + xAmbient);
+     Output.Color = baseColor*(diffuseLightingFactor + Ambient);
  
      return Output;
  }
