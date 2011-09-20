@@ -40,10 +40,10 @@ namespace EngineTest {
             */
 
             Effect effect = Game.engine.Effect;
-            effect.Parameters["xWorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
+            effect.Parameters["WorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
             effect.Parameters["xTexture"].SetValue(Texture);
-            effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xLightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
+            effect.Parameters["World"].SetValue(worldMatrix);
+            effect.Parameters["LightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
                 pass.Apply();
