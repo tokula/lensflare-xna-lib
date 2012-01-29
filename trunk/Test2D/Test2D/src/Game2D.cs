@@ -18,7 +18,7 @@ namespace Test2D {
     /// </summary>
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        public SpriteBatch spriteBatch;
         ProceduralTextureBuilder proceduralTexture;
 
         public Engine engine;
@@ -64,6 +64,8 @@ namespace Test2D {
             engine.Load();
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
+
+            Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 
         /// <summary>
@@ -120,6 +122,8 @@ namespace Test2D {
             engine.Draw2D(gameTime);
 
             spriteBatch.Begin();
+
+            Entity.DrawAll();
 
             //hud:
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
