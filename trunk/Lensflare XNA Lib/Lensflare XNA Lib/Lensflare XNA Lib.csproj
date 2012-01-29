@@ -111,7 +111,6 @@
     <Compile Include="src\Entity.cs" />
     <Compile Include="src\Engine.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\Shape3D\SquarePyramid.cs" />
     <Compile Include="src\Shape3D\Quad.cs" />
     <Compile Include="src\Util\Camera.cs" />
     <Compile Include="src\Util\Input.cs" />
