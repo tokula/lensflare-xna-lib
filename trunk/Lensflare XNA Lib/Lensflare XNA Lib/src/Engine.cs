@@ -94,13 +94,16 @@ namespace LensflareGameFramework {
             renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
         }
 
-        public void Update(GameTime gameTime) {
+        public void Update2D(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            UpdateLight();
-
             Entity.UpdateAll(gameTime);
+            Input.Update();
+        }
 
+        public void Update3D(GameTime gameTime) {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            UpdateLight();
+            Entity.UpdateAll(gameTime);
             CenterMouseCursor();
             Input.Update();
         }
@@ -122,7 +125,18 @@ namespace LensflareGameFramework {
             //lightArrow.direction = /*Vector3.Normalize(new Vector3(-1, -1, -1));*/camera.rotationMatrix.Forward;
         }
 
-        public void Draw(GameTime gameTime) {
+        public void Draw2D(GameTime gameTime) {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timeSinceLastFpsUpdate += elapsedSeconds;
+            framesSinceLastFpsUpdate += 1;
+            if (timeSinceLastFpsUpdate >= FpsUpdateDelay) {
+                timeSinceLastFpsUpdate -= FpsUpdateDelay;
+                Fps = (int)(framesSinceLastFpsUpdate / FpsUpdateDelay);
+                framesSinceLastFpsUpdate = 0;
+            }
+        }
+
+        public void Draw3D(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             timeSinceLastFpsUpdate += elapsedSeconds;
             framesSinceLastFpsUpdate += 1;

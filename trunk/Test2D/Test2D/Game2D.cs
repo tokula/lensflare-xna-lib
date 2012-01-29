@@ -9,18 +9,25 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-namespace Test2D
-{
+using LensflareGameFramework;
+using Util;
+
+namespace Test2D {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game2D : Microsoft.Xna.Framework.Game
-    {
+    public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        ProceduralTextureBuilder proceduralTexture;
 
-        public Game2D()
-        {
+        public Engine engine;
+
+        SpriteFont defaultFont;
+
+        Random random = new Random();
+
+        public Game2D() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
@@ -31,9 +38,18 @@ namespace Test2D
         /// related content.  Calling base.Initialize will enumerate through any components
         /// and initialize them as well.
         /// </summary>
-        protected override void Initialize()
-        {
-            // TODO: Add your initialization logic here
+        protected override void Initialize() {
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferMultiSampling = true;
+            graphics.ApplyChanges();
+
+            proceduralTexture = new ProceduralTextureBuilder(this.GraphicsDevice);
+
+            engine = new Engine(this);
+            engine.Initialize();
+
+            Window.Title = "XNA 2D Test";
 
             base.Initialize();
         }
@@ -42,21 +58,37 @@ namespace Test2D
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
         /// </summary>
-        protected override void LoadContent()
-        {
-            // Create a new SpriteBatch, which can be used to draw textures.
+        protected override void LoadContent() {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            engine.Load();
+
+            defaultFont = Content.Load<SpriteFont>("defaultFont");
         }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
         /// </summary>
-        protected override void UnloadContent()
-        {
+        protected override void UnloadContent() {
             // TODO: Unload any non ContentManager content here
+        }
+
+        protected void ProcessInput(GameTime gameTime) {
+            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+                this.Exit();
+            }
+
+            float movementBoost = 1.0f;
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) {
+                movementBoost = 50.0f;
+            }
+
+            float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds; ;
+            float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
         }
 
         /// <summary>
@@ -64,13 +96,16 @@ namespace Test2D
         /// checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+        protected override void Update(GameTime gameTime) {
+            if (IsActive) {
+                float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // TODO: Add your update logic here
+                ProcessInput(gameTime);
+
+                //TODO: update camera
+                //TODO: update physics
+                engine.Update2D(gameTime);
+            }
 
             base.Update(gameTime);
         }
@@ -79,11 +114,32 @@ namespace Test2D
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
+        protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            engine.Draw2D(gameTime);
+
+            spriteBatch.Begin();
+
+            //hud:
+            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
+            MouseState mouseState = Mouse.GetState();
+            Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
+            
+            /*for(int i=0; i<10000; ++i) {
+                Vector2 mousePosOffset = mousePos + new Vector2((float)random.NextDouble() * 100, (float)random.NextDouble() * 100);
+                Primitive2D.DrawCircle(spriteBatch, mousePosOffset, random.Next(4,8), Color.Yellow, false);
+            }*/
+
+            String fpsString = "FPS: " + engine.Fps;
+            Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
+            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
+
+            Primitive2D.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false);
+            Primitive2D.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false);
+            Primitive2D.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
