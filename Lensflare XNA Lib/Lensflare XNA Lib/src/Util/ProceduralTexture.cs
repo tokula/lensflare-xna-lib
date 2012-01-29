@@ -7,20 +7,20 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 namespace Util {
-    public class ProceduralTexture {
+    public class ProceduralTextureBuilder {
         protected GraphicsDevice g;
 
-        public ProceduralTexture(GraphicsDevice g) {
+        public ProceduralTextureBuilder(GraphicsDevice g) {
             this.g = g;
         }
 
-        public Texture2D ColorToTexture(Color color) {
+        public Texture2D TextureFromColor(Color color) {
             Texture2D texture = new Texture2D(g, 1, 1);
             texture.SetData<Color>(new Color[] { color });
             return texture;
         }
 
-        public Texture2D BitmapToTexture(ref Color[,] colors) {
+        public Texture2D TextureFromBitmap(ref Color[,] colors) {
             int width = colors.GetLength(0);
             int height = colors.GetLength(1);
             Texture2D texture = new Texture2D(g, width, height);

@@ -20,7 +20,7 @@ namespace EngineTest {
 	class Game3D : Microsoft.Xna.Framework.Game {
 		public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
-        public ProceduralTexture proceduralTexture;
+        public ProceduralTextureBuilder proceduralTexture;
 
         public Engine engine;
         public Space space;
@@ -60,7 +60,7 @@ namespace EngineTest {
             graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            proceduralTexture = new ProceduralTexture(this.GraphicsDevice);
+            proceduralTexture = new ProceduralTextureBuilder(this.GraphicsDevice);
 
             engine = new Engine(this);
             engine.Initialize();
@@ -112,7 +112,7 @@ namespace EngineTest {
             //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
             //Entity.Add(new BoxEntity(this, new Vector3(0, 5, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
             //Entity.Add(new SphereEntity(this, new Vector3(0, 5, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-            lightArrow = new ArrowEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1), true, proceduralTexture.ColorToTexture(new Color(1.0f, 0.5f, 0.0f, 0.5f)));
+            lightArrow = new ArrowEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1), true, proceduralTexture.TextureFromColor(new Color(1.0f, 0.5f, 0.0f, 0.5f)));
             Entity.Add(lightArrow);
             //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
             creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
@@ -247,7 +247,7 @@ namespace EngineTest {
                 int colorMax = 255;
                 Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
                 float size = 0.02f + 0.1f * (float)random.NextDouble();
-                var et = new BoxEntity(this, new Vector3(13, 0, 0), new Vector3(1, 1, 1) * size, size, proceduralTexture.ColorToTexture(color));
+                var et = new BoxEntity(this, new Vector3(13, 0, 0), new Vector3(1, 1, 1) * size, size, proceduralTexture.TextureFromColor(color));
                 //var et = new ForceEntity(this, camera.Position, 0.1f, 0.5f, engine.ColorToTexture(color), 0.001f);
                 et.PhysicsEntities[0].LinearVelocity = Vector3.Forward * 10.0f;
                 Entity.Add(et);
@@ -263,7 +263,7 @@ namespace EngineTest {
                             Entity.Remove(entityHit);
                         } else if (entityHit is Tile) {
                             Tile tile = (Tile)entityHit;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.DarkRed), -1.5f));
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.TextureFromColor(Color.DarkRed), -1.5f));
                         }
                     }
                 }
@@ -277,12 +277,12 @@ namespace EngineTest {
                             SplitBox((BoxEntity)entityHit);
                         } else if(entityHit is Tile) {
                             var tile = (Tile)entityHit;
-                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.Green), 1.5f));
+                            Entity.Add(new ForceEntity(this, tile.PhysicsEntities[0].Position + new Vector3(0, Tile.Size.Y + forceEntityRadius, 0), forceEntityRadius, -1, proceduralTexture.TextureFromColor(Color.Green), 1.5f));
                         } else if (entityHit is ForceEntity) {
                             var e = (ForceEntity)entityHit;
                             Vector3 hitPos = rayHit.Location;
                             Vector3 n = Vector3.Normalize(hitPos - e.Position);
-                            Entity.Add(new ForceEntity(this, hitPos + n * forceEntityRadius, forceEntityRadius, -1, proceduralTexture.ColorToTexture(Color.Green), 0.5f));
+                            Entity.Add(new ForceEntity(this, hitPos + n * forceEntityRadius, forceEntityRadius, -1, proceduralTexture.TextureFromColor(Color.Green), 0.5f));
                         }
                     }
                 }
@@ -426,7 +426,7 @@ namespace EngineTest {
                                     int colorMin = 150;
                                     int colorMax = 255;
                                     Color color = new Color(random.Next(colorMin, colorMax), random.Next(colorMin, colorMax), random.Next(colorMin, colorMax) * 0);
-                                    Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X * 2, 1, pickedPoint.Y * Tile.Size.Z * 2), proceduralTexture.ColorToTexture(color), noteSound[random.Next(noteSound.Length)]);
+                                    Tile tile = new Tile(this, new Vector3(pickedPoint.X * Tile.Size.X * 2, 1, pickedPoint.Y * Tile.Size.Z * 2), proceduralTexture.TextureFromColor(color), noteSound[random.Next(noteSound.Length)]);
                                     Entity.Add(tile);
                                     tiles.Add(pickedPoint, tile);
                                     //noteSound[random.Next(noteSound.Length)].Play(0.5f, 0.0f, 0.0f);
@@ -444,7 +444,7 @@ namespace EngineTest {
 
                 camera.Update(gameTime);
                 space.Update(elapsedSeconds);
-                engine.Update(gameTime);
+                engine.Update3D(gameTime);
 			}
 
 			base.Update(gameTime);
@@ -459,7 +459,7 @@ namespace EngineTest {
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
-            engine.Draw(gameTime);
+            engine.Draw3D(gameTime);
 
             //hud:
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
