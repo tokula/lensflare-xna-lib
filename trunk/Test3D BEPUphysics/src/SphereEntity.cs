@@ -10,7 +10,7 @@ namespace EngineTest {
     class SphereEntity : GameEntity {
 		Shape3D.Sphere visualSphere;
 
-        public SphereEntity(Game1 game, Vector3 position, float radius, float mass, Texture2D texture) : base(game, texture) {
+        public SphereEntity(Game3D game, Vector3 position, float radius, float mass, Texture2D texture) : base(game, texture) {
             visualSphere = new Shape3D.Sphere(game, radius, 128, 128);
 			if (mass < 0) {
                 physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));

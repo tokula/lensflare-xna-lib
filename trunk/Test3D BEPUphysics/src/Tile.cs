@@ -15,7 +15,7 @@ namespace EngineTest {
 
         public static Vector3 Size { get { return size; } }
 
-        public Tile(Game1 game, Vector3 position, Texture2D texture, SoundEffect sound) : base(game, texture) {
+        public Tile(Game3D game, Vector3 position, Texture2D texture, SoundEffect sound) : base(game, texture) {
             this.sound = sound;
             visualBox = new Shape3D.Box(game, size*0.95f);
             Vector3 physicalSize = size * 2;

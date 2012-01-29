@@ -10,7 +10,7 @@ namespace EngineTest {
     class GroundEntity : GameEntity {
         Shape3D.Quad quad;
 
-        public GroundEntity(Game1 game, Vector3 position, Vector3 size, Texture2D texture) : base(game, texture) {
+        public GroundEntity(Game3D game, Vector3 position, Vector3 size, Texture2D texture) : base(game, texture) {
             quad = new Shape3D.Quad(game, size);
             Vector3 physicalSize = size * 2;
 		    physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Box(position, physicalSize.X, physicalSize.Y, physicalSize.Z)); //TODO: Plane instaead of Box
