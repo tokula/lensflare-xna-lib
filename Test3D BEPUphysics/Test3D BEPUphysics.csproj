@@ -127,7 +127,7 @@
     <Compile Include="src\BoxEntity.cs" />
     <Compile Include="src\ArrowEntity.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\Game1.cs" />
+    <Compile Include="src\Game3D.cs" />
     <Compile Include="src\Tile.cs" />
   </ItemGroup>
   <ItemGroup>

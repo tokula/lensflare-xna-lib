@@ -10,11 +10,11 @@ namespace EngineTest {
     abstract class GameEntity : Entity { //TODO: evtl nach engine verschieben (mögliches problem: Game1 referenz)
         protected List<BEPUphysics.Entities.Entity> physicsEntities = new List<BEPUphysics.Entities.Entity>();
 
-        public Game1 Game { get; private set; }
+        public Game3D Game { get; private set; }
         public Texture2D Texture { get; set; }
         public List<BEPUphysics.Entities.Entity> PhysicsEntities { get { return physicsEntities; } }
 
-        public GameEntity(Game1 game, Texture2D texture) {
+        public GameEntity(Game3D game, Texture2D texture) {
             Game = game;
 			this.Texture = texture;
 		}

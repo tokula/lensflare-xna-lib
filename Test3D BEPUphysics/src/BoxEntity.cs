@@ -10,7 +10,7 @@ namespace EngineTest {
 	class BoxEntity : GameEntity {
         protected Shape3D.Box visualBox;
 
-        public BoxEntity(Game1 game, Vector3 position, Vector3 size, float mass, Texture2D texture) : base(game, texture) {
+        public BoxEntity(Game3D game, Vector3 position, Vector3 size, float mass, Texture2D texture) : base(game, texture) {
             visualBox = new Shape3D.Box(game, size);
             Vector3 physicalSize = size * 2;
 			if (mass < 0) {

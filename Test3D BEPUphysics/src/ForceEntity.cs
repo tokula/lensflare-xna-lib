@@ -13,7 +13,7 @@ namespace EngineTest {
         public Vector3 Position { get { return physicsEntities[0].Position; } }
         public float Radius { get { return ((BEPUphysics.Entities.Prefabs.Sphere)physicsEntities[0]).Radius; } }
 
-        public ForceEntity(Game1 game, Vector3 position, float radius, float mass, Texture2D texture, float force) : base(game, texture) {
+        public ForceEntity(Game3D game, Vector3 position, float radius, float mass, Texture2D texture, float force) : base(game, texture) {
             visualSphere = new Shape3D.Sphere(game, radius, 64, 64);
             Force = force;
             if (mass < 0) {

@@ -17,7 +17,7 @@ namespace EngineTest {
 	/// <summary>
 	/// This is the main type for your game
 	/// </summary>
-	class Game1 : Microsoft.Xna.Framework.Game {
+	class Game3D : Microsoft.Xna.Framework.Game {
 		public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
         public ProceduralTexture proceduralTexture;
@@ -42,7 +42,7 @@ namespace EngineTest {
         bool freeCamera = false;
         bool planeGround = true;
 
-		public Game1() {
+		public Game3D() {
 			graphics = new GraphicsDeviceManager(this);
 
 			Content.RootDirectory = "Content";

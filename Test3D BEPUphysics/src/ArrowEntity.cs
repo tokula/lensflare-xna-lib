@@ -23,7 +23,7 @@ namespace EngineTest {
         protected bool tipIsOrigin;
         protected const float tipSizeFactor = 0.1f;
 
-        public ArrowEntity(Game1 game, Vector3 position, Vector3 size, bool tipIsOrigin, Texture2D texture) : base(game, texture) {
+        public ArrowEntity(Game3D game, Vector3 position, Vector3 size, bool tipIsOrigin, Texture2D texture) : base(game, texture) {
             this.position = position;
             this.tipIsOrigin = tipIsOrigin;
             wireframe = false;
