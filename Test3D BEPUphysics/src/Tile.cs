@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace EngineTest {
     class Tile : GameEntity {
-        protected Shape3D.Box visualBox;
+        protected Shape3.Box visualBox;
         protected SoundEffect sound;
         protected static readonly Vector3 size = new Vector3(0.5f, 0.05f, 0.5f);
 
@@ -17,7 +17,7 @@ namespace EngineTest {
 
         public Tile(Game3D game, Vector3 position, Texture2D texture, SoundEffect sound) : base(game, texture) {
             this.sound = sound;
-            visualBox = new Shape3D.Box(game, size*0.95f);
+            visualBox = new Shape3.Box(game, size*0.95f);
             Vector3 physicalSize = size * 2;
 			physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Box(position, physicalSize.X, physicalSize.Y, physicalSize.Z));
             physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;

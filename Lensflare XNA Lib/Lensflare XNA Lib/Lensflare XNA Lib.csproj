@@ -108,21 +108,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Camera\SmoothCamera2.cs" />
     <Compile Include="src\Entity.cs" />
     <Compile Include="src\Engine.cs" />
     <Compile Include="src\Program.cs" />
-    <Compile Include="src\Shape3D\Quad.cs" />
-    <Compile Include="src\Util\Camera.cs" />
+    <Compile Include="src\Shape3\Quad.cs" />
+    <Compile Include="src\Camera\Camera3.cs" />
+    <Compile Include="src\Camera\Camera2.cs" />
     <Compile Include="src\Util\Input.cs" />
     <Compile Include="src\Util\IntVector2.cs" />
-    <Compile Include="src\Util\Primitive2D.cs" />
-    <Compile Include="src\Shape3D\Arrow.cs" />
-    <Compile Include="src\Shape3D\Box.cs" />
-    <Compile Include="src\Shape3D\Shape.cs" />
-    <Compile Include="src\Shape3D\Sphere.cs" />
-    <Compile Include="src\Shape3D\Tetrahedron.cs" />
+    <Compile Include="src\Util\Primitive2.cs" />
+    <Compile Include="src\Shape3\Arrow.cs" />
+    <Compile Include="src\Shape3\Box.cs" />
+    <Compile Include="src\Shape3\Shape.cs" />
+    <Compile Include="src\Shape3\Sphere.cs" />
+    <Compile Include="src\Shape3\Tetrahedron.cs" />
     <Compile Include="src\Util\ProceduralTexture.cs" />
-    <Compile Include="src\Util\SmoothCamera.cs" />
+    <Compile Include="src\Camera\SmoothCamera3.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

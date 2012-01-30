@@ -8,10 +8,10 @@ using LensflareGameFramework;
 
 namespace EngineTest {
 	class BoxEntity : GameEntity {
-        protected Shape3D.Box visualBox;
+        protected Shape3.Box visualBox;
 
         public BoxEntity(Game3D game, Vector3 position, Vector3 size, float mass, Texture2D texture) : base(game, texture) {
-            visualBox = new Shape3D.Box(game, size);
+            visualBox = new Shape3.Box(game, size);
             Vector3 physicalSize = size * 2;
 			if (mass < 0) {
 				physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Box(position, physicalSize.X, physicalSize.Y, physicalSize.Z));

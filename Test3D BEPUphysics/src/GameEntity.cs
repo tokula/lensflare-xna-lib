@@ -30,7 +30,7 @@ namespace EngineTest {
             Texture = null;
         }
 
-        protected void DrawShape(Matrix worldMatrix, Shape3D.Shape shape) {
+        protected void DrawShape(Matrix worldMatrix, Shape3.Shape shape) {
             /*
             effect.World = physicsBox.WorldTransform;
             effect.VertexColorEnabled = false;

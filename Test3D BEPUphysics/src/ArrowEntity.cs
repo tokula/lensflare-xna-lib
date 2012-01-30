@@ -5,7 +5,7 @@ using System.Text;
 using LensflareGameFramework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Shape3D;
+using Shape3;
 
 namespace EngineTest {
     class ArrowEntity : GameEntity {

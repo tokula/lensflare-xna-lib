@@ -139,9 +139,9 @@ namespace Test2D {
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
             spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
 
-            Primitive2D.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false);
-            Primitive2D.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false);
-            Primitive2D.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false);
 
             spriteBatch.End();
 
