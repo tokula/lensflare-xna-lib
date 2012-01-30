@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 
 using LensflareGameFramework;
 using Util;
+using Camera;
 
 namespace Test2D {
     /// <summary>
@@ -20,6 +21,8 @@ namespace Test2D {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
         ProceduralTextureBuilder proceduralTexture;
+
+        SmoothCamera2 camera = new SmoothCamera2();
 
         public Engine engine;
 
@@ -65,6 +68,10 @@ namespace Test2D {
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
 
+            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
+            camera.PositionScreen = screenCenter;
+            camera.Size = new Vector2(800, 600);
+
             Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 
@@ -104,7 +111,7 @@ namespace Test2D {
 
                 ProcessInput(gameTime);
 
-                //TODO: update camera
+                camera.Update(gameTime);
                 //TODO: update physics
                 engine.Update2D(gameTime);
             }
@@ -117,6 +124,8 @@ namespace Test2D {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
+            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             engine.Draw2D(gameTime);
@@ -125,8 +134,10 @@ namespace Test2D {
 
             Entity.DrawAll();
 
+            //camera:
+            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.Size * 0.5f, camera.Size, Color.White, false); //camera frame
+
             //hud:
-            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             MouseState mouseState = Mouse.GetState();
             Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
             
