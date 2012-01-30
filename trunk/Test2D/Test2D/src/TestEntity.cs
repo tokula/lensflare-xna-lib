@@ -30,13 +30,13 @@ namespace Test2D {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             tempVariable += elapsedSeconds*5;
             tempVariableB += elapsedSeconds*2;
-            //Console.WriteLine("elapsed seconds: " + elapsedSeconds);
             position.X += 3.0f * (float)Math.Sin((double)tempVariable);
             position.Y += 1.0f * (float)Math.Sin((double)tempVariableB);
+            radius += 0.7f * (float)Math.Sin((double)tempVariableB);
         }
 
         public override void Draw() {
-            Primitive2.DrawCircle(Game.spriteBatch, position, radius, Color.Yellow, false);
+            Primitive2.DrawCircle(Game.spriteBatch, position, radius, Color.Orange, false);
         }
     }
 }

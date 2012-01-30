@@ -3,7 +3,7 @@
 namespace Camera {
     public class Camera3 {
         protected float aspectRatio = 1.0f;
-        protected Vector3 position;
+        protected Vector3 position = Vector3.Zero;
         protected Vector3 rotation = Vector3.Zero;
         protected Matrix view = Matrix.Identity;
         protected Matrix projection = Matrix.Identity;

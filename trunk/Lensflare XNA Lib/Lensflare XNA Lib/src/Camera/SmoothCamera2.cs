@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Camera {
-    class SmoothCamera2 : Camera2 {
+    public class SmoothCamera2 : Camera2 {
         protected Vector2 velocity = Vector2.Zero;
         protected float dampingFactor = 0.9f;
 
@@ -18,7 +18,7 @@ namespace Camera {
         public override void Update(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             velocity *= (float)Math.Pow(dampingFactor * 0.01f, elapsedSeconds);
-            position += velocity * elapsedSeconds;
+            positionWorld += velocity * elapsedSeconds;
             base.Update(gameTime);
         }
     }
