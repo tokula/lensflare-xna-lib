@@ -5,13 +5,14 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Util;
-using Shape3D;
+using Shape3;
 using System.Collections.Generic;
 using BEPUphysics.MathExtensions;
 using BEPUphysics;
 using BEPUphysics.Collidables.MobileCollidables;
 using BEPUphysics.Collidables;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
+using Camera;
 
 namespace EngineTest {
 	/// <summary>
@@ -27,7 +28,7 @@ namespace EngineTest {
 
         SoundEffect[] noteSound;
 
-        public SmoothCamera camera;
+        public SmoothCamera3 camera;
 
         Random random = new Random();
 
@@ -79,7 +80,7 @@ namespace EngineTest {
 
             engine.Load();
 
-			camera = new SmoothCamera();
+			camera = new SmoothCamera3();
             camera.AspectRatio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;
 			camera.Position = new Vector3(0, 1, 10);
 			camera.Rotation = new Vector3(0, 0, 0);
@@ -140,8 +141,8 @@ namespace EngineTest {
                 movementBoost = 50.0f;
             }
 
-            float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds; ;
-            float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
+            float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds;
+            float cameraMovementAcc = 50.0f * movementBoost * elapsedSeconds;
             float cameraRotationSpeed = 1.5f * elapsedSeconds;
             float mouseRotationSpeed = 0.1f * elapsedSeconds;
             bool debugValueHasChanged = false;
@@ -196,16 +197,16 @@ namespace EngineTest {
             if (freeCamera) {
                 //camera controls:
                 if (Keyboard.GetState().IsKeyDown(Keys.S)) {
-                    camera.Velocity -= cameraRotationMatrix.Forward * cameraMovementSpeed;
+                    camera.Velocity -= cameraRotationMatrix.Forward * cameraMovementAcc;
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.W)) {
-                    camera.Velocity += cameraRotationMatrix.Forward * cameraMovementSpeed;
+                    camera.Velocity += cameraRotationMatrix.Forward * cameraMovementAcc;
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.A)) {
-                    camera.Velocity += cameraRotationMatrix.Left * cameraMovementSpeed;
+                    camera.Velocity += cameraRotationMatrix.Left * cameraMovementAcc;
                 }
                 if (Keyboard.GetState().IsKeyDown(Keys.D)) {
-                    camera.Velocity += cameraRotationMatrix.Right * cameraMovementSpeed;
+                    camera.Velocity += cameraRotationMatrix.Right * cameraMovementAcc;
                 }
             } else {
                 float creatorMovementSpeed = 30.0f * elapsedSeconds;
@@ -470,9 +471,9 @@ namespace EngineTest {
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
             spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
             if (freeCamera) {
-                Primitive2D.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
-                Primitive2D.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
-                Primitive2D.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
             }
             spriteBatch.End();
 

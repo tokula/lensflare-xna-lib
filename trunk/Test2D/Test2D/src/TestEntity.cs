@@ -36,7 +36,7 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Primitive2D.DrawCircle(Game.spriteBatch, position, radius, Color.Yellow, false);
+            Primitive2.DrawCircle(Game.spriteBatch, position, radius, Color.Yellow, false);
         }
     }
 }

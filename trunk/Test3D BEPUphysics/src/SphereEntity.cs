@@ -8,10 +8,10 @@ using LensflareGameFramework;
 
 namespace EngineTest {
     class SphereEntity : GameEntity {
-		Shape3D.Sphere visualSphere;
+		Shape3.Sphere visualSphere;
 
         public SphereEntity(Game3D game, Vector3 position, float radius, float mass, Texture2D texture) : base(game, texture) {
-            visualSphere = new Shape3D.Sphere(game, radius, 128, 128);
+            visualSphere = new Shape3.Sphere(game, radius, 128, 128);
 			if (mass < 0) {
                 physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));
 			} else {

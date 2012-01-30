@@ -8,13 +8,13 @@ using LensflareGameFramework;
 
 namespace EngineTest {
     class ForceEntity : GameEntity {
-		protected Shape3D.Sphere visualSphere;
+		protected Shape3.Sphere visualSphere;
         public float Force { get; set; }
         public Vector3 Position { get { return physicsEntities[0].Position; } }
         public float Radius { get { return ((BEPUphysics.Entities.Prefabs.Sphere)physicsEntities[0]).Radius; } }
 
         public ForceEntity(Game3D game, Vector3 position, float radius, float mass, Texture2D texture, float force) : base(game, texture) {
-            visualSphere = new Shape3D.Sphere(game, radius, 64, 64);
+            visualSphere = new Shape3.Sphere(game, radius, 64, 64);
             Force = force;
             if (mass < 0) {
                 physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Sphere(position, radius));

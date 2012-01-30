@@ -74,7 +74,7 @@ namespace LensflareGameFramework {
         }
 
         public void Load() {
-            Primitive2D.Init(Game.GraphicsDevice);
+            Primitive2.Init(Game.GraphicsDevice);
 
             //GraphicsDevice.RenderState.CullMode = CullMode.CullCounterClockwiseFace;
             //GraphicsDevice.PresentationParameters.MultiSampleQuality = 8;

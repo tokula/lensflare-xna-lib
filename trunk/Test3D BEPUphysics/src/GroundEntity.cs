@@ -8,10 +8,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace EngineTest {
     class GroundEntity : GameEntity {
-        Shape3D.Quad quad;
+        Shape3.Quad quad;
 
         public GroundEntity(Game3D game, Vector3 position, Vector3 size, Texture2D texture) : base(game, texture) {
-            quad = new Shape3D.Quad(game, size);
+            quad = new Shape3.Quad(game, size);
             Vector3 physicalSize = size * 2;
 		    physicsEntities.Add(new BEPUphysics.Entities.Prefabs.Box(position, physicalSize.X, physicalSize.Y, physicalSize.Z)); //TODO: Plane instaead of Box
 			physicsEntities[0].CollisionInformation.Events.InitialCollisionDetected += game.HandleCollision;
