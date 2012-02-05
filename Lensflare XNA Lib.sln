@@ -14,10 +14,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lensflare XNA Lib Content",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test2D", "Test2D\Test2D\Test2D.csproj", "{F83A57DB-E5E9-4619-AAFC-52CE256B4D4B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{0A850700-1ABB-4288-A391-6726B90EBEB9} = {0A850700-1ABB-4288-A391-6726B90EBEB9}
 		{5F41E60D-051B-4BF7-A67B-49335F565536} = {5F41E60D-051B-4BF7-A67B-49335F565536}
 	EndProjectSection
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Test2DContent", "Test2D\Test2DContent\Test2DContent.contentproj", "{A5230750-D824-4E69-A02B-7FDA56179308}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test2DContent", "Test2D\Test2DContent\Test2DContent.contentproj", "{A5230750-D824-4E69-A02B-7FDA56179308}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics XNA", "Farseer Physics Engine 3.3 XNA\Farseer Physics XNA.csproj", "{0A850700-1ABB-4288-A391-6726B90EBEB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +46,10 @@ Global
 		{F83A57DB-E5E9-4619-AAFC-52CE256B4D4B}.Release|x86.Build.0 = Release|x86
 		{A5230750-D824-4E69-A02B-7FDA56179308}.Debug|x86.ActiveCfg = Debug|x86
 		{A5230750-D824-4E69-A02B-7FDA56179308}.Release|x86.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.ActiveCfg = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Debug|x86.Build.0 = Debug|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.ActiveCfg = Release|x86
+		{0A850700-1ABB-4288-A391-6726B90EBEB9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -61,7 +61,9 @@ namespace Util {
                 int a = (int)r + 1;
                 for (int p = 0; p < a; ++p) {
                     int e = (int)Math.Sqrt(r * r - p * p);
-                    spriteBatch.Draw(pixel, new Rectangle((int)position.X + p, (int)position.Y - e, 1, e * 2 + 1), color);
+                    if (p > 0) {
+                        spriteBatch.Draw(pixel, new Rectangle((int)position.X + p, (int)position.Y - e, 1, e * 2 + 1), color);
+                    }
                     spriteBatch.Draw(pixel, new Rectangle((int)position.X - p, (int)position.Y - e, 1, e * 2 + 1), color);
                 }
             }
