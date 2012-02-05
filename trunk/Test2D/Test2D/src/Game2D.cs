@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Media;
 using LensflareGameFramework;
 using Util;
 using Camera;
+using FarseerPhysics.Dynamics;
 
 namespace Test2D {
     /// <summary>
@@ -25,6 +26,7 @@ namespace Test2D {
         SmoothCamera2 camera = new SmoothCamera2();
 
         public Engine engine;
+        public World world;
 
         SpriteFont defaultFont;
 
@@ -54,6 +56,9 @@ namespace Test2D {
 
             Window.Title = "XNA 2D Test";
 
+            this.IsFixedTimeStep = true;
+            //this.TargetElapsedTime = new TimeSpan(0, 0, 0, 1000/60);
+
             base.Initialize();
         }
 
@@ -67,6 +72,8 @@ namespace Test2D {
             engine.Load();
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
+
+            world = new World(Vector2.Zero);
 
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             camera.PositionScreen = screenCenter;
@@ -86,6 +93,8 @@ namespace Test2D {
         protected void ProcessInput(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            Vector2 mousePosition = Input.MousePosition;
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) {
                 this.Exit();
@@ -98,6 +107,10 @@ namespace Test2D {
 
             float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds; ;
             float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
+
+            if (Input.MousePressing(Input.MouseButton.LeftButton)) {
+                Entity.Add(new TestEntity(this, mousePosition, random.Next(10, 20), 1.0f));
+            }
         }
 
         /// <summary>
@@ -112,7 +125,7 @@ namespace Test2D {
                 ProcessInput(gameTime);
 
                 camera.Update(gameTime);
-                //TODO: update physics
+                world.Step(elapsedSeconds);
                 engine.Update2D(gameTime);
             }
 
@@ -138,8 +151,7 @@ namespace Test2D {
             Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.Size * 0.5f, camera.Size, Color.White, false); //camera frame
 
             //hud:
-            MouseState mouseState = Mouse.GetState();
-            Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
+            Vector2 mousePos = Input.MousePosition;
             
             /*for(int i=0; i<10000; ++i) {
                 Vector2 mousePosOffset = mousePos + new Vector2((float)random.NextDouble() * 100, (float)random.NextDouble() * 100);

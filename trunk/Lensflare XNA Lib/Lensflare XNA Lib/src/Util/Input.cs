@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 namespace Util {
     public static class Input {
@@ -52,6 +53,13 @@ namespace Util {
                 return Mouse.GetState().XButton2 == ButtonState.Pressed;
             }
             return false;
+        }
+
+        public static Vector2 MousePosition {
+            get {
+                MouseState mouseState = Mouse.GetState();
+                return new Vector2(mouseState.X, mouseState.Y);
+            }
         }
 
         public static int MouseDeltaX {
