@@ -25,7 +25,7 @@ namespace Test2D {
         public SpriteBatch spriteBatch;
         ProceduralTextureBuilder proceduralTexture;
 
-        SmoothCamera2 camera = new SmoothCamera2();
+        public SmoothCamera2 camera = new SmoothCamera2();
 
         public Engine engine;
         public World world;
@@ -58,7 +58,7 @@ namespace Test2D {
 
             Window.Title = "XNA 2D Test";
 
-            this.TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 1000/60);
+            //this.TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 1000/60);
             this.IsFixedTimeStep = true;
 
             base.Initialize();
@@ -81,6 +81,7 @@ namespace Test2D {
             camera.PositionScreen = screenCenter;
             camera.Size = new Vector2(800, 600);
 
+            Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
             Entity.Add(new GroundEntity(this));
             Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
@@ -97,6 +98,7 @@ namespace Test2D {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             Vector2 mousePosition = Input.MousePosition;
+            Vector2 mouseWorldPosition = mousePosition - camera.PositionScreen + camera.PositionWorld;
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) {
@@ -112,7 +114,7 @@ namespace Test2D {
             float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
 
             if (Input.MousePressing(Input.MouseButton.LeftButton)) {
-                Entity.Add(new TestEntity(this, mousePosition, random.Next(10, 20), 1.0f));
+                Entity.Add(new TestEntity(this, mouseWorldPosition, random.Next(10, 20), 1.0f));
             }
         }
 

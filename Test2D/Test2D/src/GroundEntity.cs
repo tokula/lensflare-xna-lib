@@ -17,7 +17,7 @@ namespace Test2D {
             body = new Body(game.world);
             body.BodyType = BodyType.Static;
 
-            shape = new EdgeShape(new Vector2(10, 300), new Vector2(500, 350));
+            shape = new EdgeShape(new Vector2(-200, 100), new Vector2(300, 150));
             fixture = new Fixture(body, shape);
         }
 
@@ -30,7 +30,8 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Primitive2.DrawLine(Game.spriteBatch, shape.Vertex1, shape.Vertex2, Color.DarkGreen);
+            Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
+            Primitive2.DrawLine(Game.spriteBatch, screenPosition + shape.Vertex1, screenPosition + shape.Vertex2, Color.DarkGreen);
         }
     }
 }
