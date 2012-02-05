@@ -38,7 +38,8 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Primitive2.DrawCircle(Game.spriteBatch, body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
+            Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
+            Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
         }
     }
 }
