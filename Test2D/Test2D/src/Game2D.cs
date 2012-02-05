@@ -13,6 +13,8 @@ using LensflareGameFramework;
 using Util;
 using Camera;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics;
+using FarseerPhysics.Collision.Shapes;
 
 namespace Test2D {
     /// <summary>
@@ -56,8 +58,8 @@ namespace Test2D {
 
             Window.Title = "XNA 2D Test";
 
+            this.TargetElapsedTime = new TimeSpan(0, 0, 0, 0, 1000/60);
             this.IsFixedTimeStep = true;
-            //this.TargetElapsedTime = new TimeSpan(0, 0, 0, 1000/60);
 
             base.Initialize();
         }
@@ -73,12 +75,13 @@ namespace Test2D {
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
 
-            world = new World(Vector2.Zero);
+            world = new World(new Vector2(0, 100));
 
             Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
             camera.PositionScreen = screenCenter;
             camera.Size = new Vector2(800, 600);
 
+            Entity.Add(new GroundEntity(this));
             Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 
