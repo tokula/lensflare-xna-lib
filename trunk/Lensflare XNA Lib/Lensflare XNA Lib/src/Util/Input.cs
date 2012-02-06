@@ -62,6 +62,13 @@ namespace Util {
             }
         }
 
+        public static Vector2 MouseDelta {
+            get {
+                MouseState mouseState = Mouse.GetState();
+                return new Vector2(mouseState.X - previousMouseState.X, mouseState.Y - previousMouseState.Y);
+            }
+        }
+
         public static int MouseDeltaX {
             get {
                 return Mouse.GetState().X - previousMouseState.X;

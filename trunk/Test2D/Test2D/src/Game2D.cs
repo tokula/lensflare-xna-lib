@@ -107,14 +107,35 @@ namespace Test2D {
 
             float movementBoost = 1.0f;
             if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) {
-                movementBoost = 50.0f;
+                movementBoost = 10.0f;
             }
 
-            float debugValueSpeed = 1.0f * movementBoost * elapsedSeconds; ;
-            float cameraMovementSpeed = 1.0f * movementBoost * elapsedSeconds;
+            float cameraMovementSpeedKeys = 3000.0f * movementBoost * elapsedSeconds;
+            float cameraMovementSpeedMouse = 100.0f * movementBoost * elapsedSeconds;
 
             if (Input.MousePressing(Input.MouseButton.LeftButton)) {
                 Entity.Add(new TestEntity(this, mouseWorldPosition, random.Next(10, 20), 1.0f));
+            }
+
+            Vector2 arrowKeysVector = Vector2.Zero;
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
+                arrowKeysVector.X -= 1.0f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Right)) {
+                arrowKeysVector.X += 1.0f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
+                arrowKeysVector.Y -= 1.0f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
+                arrowKeysVector.Y += 1.0f;
+            }
+
+            camera.Velocity += arrowKeysVector * cameraMovementSpeedKeys;
+
+            if (Input.MousePressing(Input.MouseButton.MiddleButton)) {
+                camera.PositionWorld -= Input.MouseDelta;
             }
         }
 
