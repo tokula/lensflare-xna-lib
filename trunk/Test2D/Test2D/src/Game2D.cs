@@ -34,6 +34,8 @@ namespace Test2D {
 
         Random random = new Random();
 
+        Texture2D circleTexture;
+
         public Game2D() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -74,6 +76,9 @@ namespace Test2D {
             engine.Load();
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
+            Texture2D platesTexture = Content.Load<Texture2D>("plates7");
+            Texture2D scratchedTexture = Content.Load<Texture2D>("scratched2");
+            circleTexture = Content.Load<Texture2D>("circle2");
 
             world = new World(new Vector2(0, 100));
 
@@ -81,9 +86,14 @@ namespace Test2D {
             camera.PositionScreen = screenCenter;
             camera.Size = new Vector2(800, 600);
 
+            ParallaxEntity parallaxEntity = new ParallaxEntity(this);
+            parallaxEntity.texture1 = platesTexture;
+            parallaxEntity.texture2 = scratchedTexture;
+            Entity.Add(parallaxEntity);
+
             Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
             Entity.Add(new GroundEntity(this));
-            Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
+            //Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 
         /// <summary>
@@ -114,7 +124,9 @@ namespace Test2D {
             float cameraMovementSpeedMouse = 100.0f * movementBoost * elapsedSeconds;
 
             if (Input.MousePressing(Input.MouseButton.LeftButton)) {
-                Entity.Add(new TestEntity(this, mouseWorldPosition, random.Next(10, 20), 1.0f));
+                TestEntity testEntity = new TestEntity(this, mouseWorldPosition, random.Next(30, 60), 1.0f);
+                testEntity.texture = circleTexture;
+                Entity.Add(testEntity);
             }
 
             Vector2 arrowKeysVector = Vector2.Zero;
