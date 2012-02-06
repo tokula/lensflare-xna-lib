@@ -14,6 +14,7 @@ namespace Test2D {
         Body body;
         CircleShape shape;
         Fixture fixture;
+        public Texture2D texture;
 
         public TestEntity(Game2D game, Vector2 position, float radius, float density) : base(game) {
             body = new Body(game.world);
@@ -39,7 +40,12 @@ namespace Test2D {
 
         public override void Draw() {
             Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
-            Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
+            //Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
+            Vector2 position = body.Position + screenPosition;
+            Rectangle rect = texture.Bounds;
+            Vector2 origin = new Vector2(texture.Bounds.Center.X, texture.Bounds.Center.Y);
+            float scale = 2.0f * shape.Radius / texture.Bounds.Height;
+            Game.spriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale, SpriteEffects.None, 1.0f);
         }
     }
 }
