@@ -23,7 +23,7 @@ namespace Test2D {
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
-        ProceduralTextureBuilder proceduralTexture;
+        ProceduralTextureBuilder proceduralTextureBuilder;
 
         public SmoothCamera2 camera = new SmoothCamera2();
 
@@ -54,7 +54,7 @@ namespace Test2D {
             graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            proceduralTexture = new ProceduralTextureBuilder(this.GraphicsDevice);
+            proceduralTextureBuilder = new ProceduralTextureBuilder(this.GraphicsDevice);
 
             engine = new Engine(this);
             engine.Initialize();

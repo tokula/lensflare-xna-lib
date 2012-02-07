@@ -36,6 +36,25 @@ namespace Util {
             return texture;
         }
 
+        public Texture2D EuclideanDistance(int width, int height, Color color) {
+            Texture2D texture = new Texture2D(g, width, height);
+            Color[] colors1D = new Color[width * height];
+            int i = 0;
+            int cx;
+            int cy;
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    cx = x - width / 2;
+                    cy = y - height / 2;
+                    float alphaFactor = 1.0f - ((float)Math.Sqrt(cx * cx + cy * cy) / width * 2.0f);
+                    colors1D[i++] = color * alphaFactor; 
+                }
+            }
+            Debug.Assert(i == colors1D.Length);
+            texture.SetData(colors1D);
+            return texture;
+        }
+
         public Texture2D Test(int width, int height) { //TODO: ...
             Texture2D texture = new Texture2D(g, width, height);
             Color[] colors = new Color[width * height];
