@@ -117,6 +117,7 @@
     <Compile Include="src\Camera\Camera2.cs" />
     <Compile Include="src\Util\Input.cs" />
     <Compile Include="src\Util\IntVector2.cs" />
+    <Compile Include="src\Util\KeyValueManager.cs" />
     <Compile Include="src\Util\Primitive2.cs" />
     <Compile Include="src\Shape3\Arrow.cs" />
     <Compile Include="src\Shape3\Box.cs" />
