@@ -28,8 +28,6 @@ namespace LensflareGameFramework {
 
     //TODO: projekt als lib
 
-    //TODO: FPS counter
-
     public class Engine {
         //TODO: properties
         
@@ -56,9 +54,11 @@ namespace LensflareGameFramework {
         public int ScreenWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
         public int ScreenHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
 
+        public Vector2 ScreenCenter { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width * 0.5f, vp.Height * 0.5f); } }
+
         //TODO: Constructor(), Initialize(), Load() evtl. zusammenfassen
 
-        //TODO: verschieben zu einer zentralen stelle
+        //TODO: an eine zentrale Stelle verschieben
         public static int GetEnumLength<T>() {
             return Enum.GetNames(typeof(T)).Length;
         }
@@ -104,7 +104,7 @@ namespace LensflareGameFramework {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             UpdateLight();
             Entity.UpdateAll(gameTime);
-            CenterMouseCursor();
+            CenterMouseCursor(); //TODO: von bool abhängig machen
             Input.Update();
         }
 

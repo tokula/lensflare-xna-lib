@@ -83,10 +83,13 @@ namespace Test2D {
 
             kvm = new KeyValueManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow);
 
-            world = new World(new Vector2(0, 100));
+            Keys gravityKey = Keys.G;
+            kvm.SetValueForKey(gravityKey, 100);
+            kvm.SetValueStepForKey(gravityKey, 10);
 
-            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
-            camera.PositionScreen = screenCenter;
+            world = new World(Vector2.Zero);
+
+            camera.PositionScreen = engine.ScreenCenter;
             camera.Size = new Vector2(800, 600);
 
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -166,6 +169,9 @@ namespace Test2D {
                 ProcessInput(gameTime);
 
                 kvm.Update(gameTime);
+
+                world.Gravity.Y = kvm.ValueForKey(Keys.G);
+
                 camera.Update(gameTime);
                 world.Step(elapsedSeconds);
                 engine.Update2D(gameTime);
@@ -179,8 +185,6 @@ namespace Test2D {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime) {
-            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             engine.Draw2D(gameTime);
