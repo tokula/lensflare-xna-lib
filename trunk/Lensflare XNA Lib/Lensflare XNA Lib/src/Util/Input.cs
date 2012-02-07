@@ -80,5 +80,11 @@ namespace Util {
                 return Mouse.GetState().Y - previousMouseState.Y;
             }
         }
+
+        public static int MouseWheelDelta {
+            get {
+                return Mouse.GetState().ScrollWheelValue - previousMouseState.ScrollWheelValue;
+            }
+        }
     }
 }

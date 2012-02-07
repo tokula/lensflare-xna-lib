@@ -29,6 +29,7 @@ namespace Test2D {
 
         public Engine engine;
         public World world;
+        public KeyValueManager kvm;
 
         SpriteFont defaultFont;
 
@@ -79,6 +80,8 @@ namespace Test2D {
             Texture2D platesTexture = Content.Load<Texture2D>("plates7");
             Texture2D scratchedTexture = Content.Load<Texture2D>("scratched2");
             circleTexture = Content.Load<Texture2D>("circle2");
+
+            kvm = new KeyValueManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow);
 
             world = new World(new Vector2(0, 100));
 
@@ -162,6 +165,7 @@ namespace Test2D {
 
                 ProcessInput(gameTime);
 
+                kvm.Update(gameTime);
                 camera.Update(gameTime);
                 world.Step(elapsedSeconds);
                 engine.Update2D(gameTime);
@@ -199,6 +203,8 @@ namespace Test2D {
             String fpsString = "FPS: " + engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
             spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
+
+            kvm.Draw();
 
             Primitive2.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false);
             Primitive2.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false);
