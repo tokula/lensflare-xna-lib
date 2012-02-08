@@ -33,7 +33,7 @@ namespace Test2D {
 
         SpriteFont defaultFont;
 
-        Random random = new Random();
+        public Random random = new Random();
 
         Texture2D circleTexture;
 

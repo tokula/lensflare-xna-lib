@@ -115,6 +115,7 @@
     <Compile Include="src\Shape3\Quad.cs" />
     <Compile Include="src\Camera\Camera3.cs" />
     <Compile Include="src\Camera\Camera2.cs" />
+    <Compile Include="src\Util\CellMapBuilder.cs" />
     <Compile Include="src\Util\Input.cs" />
     <Compile Include="src\Util\IntVector2.cs" />
     <Compile Include="src\Util\KeyValueManager.cs" />

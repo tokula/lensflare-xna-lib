@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 namespace Util {
-    public class ProceduralTextureBuilder {
+    public class ProceduralTextureBuilder { //TODO: rename file and class to: "TextureBuilder"
         protected GraphicsDevice g;
 
         public ProceduralTextureBuilder(GraphicsDevice g) {
