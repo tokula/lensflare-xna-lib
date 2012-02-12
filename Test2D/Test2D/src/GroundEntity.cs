@@ -6,28 +6,26 @@ using Microsoft.Xna.Framework;
 using Util;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Test2D {
     class GroundEntity : GameEntity {
         Body body;
-        //EdgeShape shape;
         LinkedList<EdgeShape> lineShapes = new LinkedList<EdgeShape>();
+        bool[,] bitmap;
+        float cellScale;
+        Texture2D texture;
 
-        public GroundEntity(Game2D game) : base(game) {
+        public GroundEntity(Game2D game, Texture2D texture) : base(game) {
+            this.texture = texture;
             body = new Body(game.world);
             body.BodyType = BodyType.Static;
 
-            //shape = new EdgeShape(new Vector2(-200, 100), new Vector2(300, 150));
-            //new Fixture(body, shape);
-
+            this.cellScale = 512;
             CellMapBuilder cmb = new CellMapBuilder(Game.random);
-            float[] components = cmb.Test(16, 16, 200);
-            for (int i = 0; i < components.Length; i += 4) {
-                float x1 = components[i];
-                float y1 = components[i + 1];
-                float x2 = components[i + 2];
-                float y2 = components[i + 3];
-                EdgeShape lineShape = new EdgeShape(new Vector2(x1, y1), new Vector2(x2, y2));
+            bitmap = cmb.MakeBitmap(16, 16, CellMapBuilder.BitmapGenerationMode.Random);
+            foreach (var vectorPair in cmb.VectorPairsList(cmb.MakeBorders(bitmap, cellScale))) {
+                EdgeShape lineShape = new EdgeShape(vectorPair[0], vectorPair[1]);
                 new Fixture(body, lineShape);
                 lineShapes.AddLast(lineShape);
             }
@@ -43,10 +41,21 @@ namespace Test2D {
 
         public override void Draw() {
             Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
-            foreach(EdgeShape shape in lineShapes) {
+
+            int cellXCount = bitmap.GetLength(0);
+            int cellYCount = bitmap.GetLength(1);
+            for (int y = 0; y < cellYCount; ++y) {
+                for (int x = 0; x < cellXCount; ++x) {
+                    if (bitmap[x, y]) {
+                        Vector2 cellOffset = new Vector2(x, y) * cellScale;
+                        Game.spriteBatch.Draw(texture, screenPosition + cellOffset, Color.White);
+                    }
+                }
+            }
+
+            foreach (EdgeShape shape in lineShapes) {
                 Primitive2.DrawLine(Game.spriteBatch, screenPosition + shape.Vertex1, screenPosition + shape.Vertex2, Color.Yellow);
             }
-            //Primitive2.DrawLine(Game.spriteBatch, screenPosition + shape.Vertex1, screenPosition + shape.Vertex2, Color.DarkGreen);
         }
     }
 }

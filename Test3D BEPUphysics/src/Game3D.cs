@@ -21,7 +21,7 @@ namespace EngineTest {
 	class Game3D : Microsoft.Xna.Framework.Game {
 		public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
-        public ProceduralTextureBuilder proceduralTexture;
+        public TextureBuilder proceduralTexture;
 
         public Engine engine;
         public Space space;
@@ -61,7 +61,7 @@ namespace EngineTest {
             graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            proceduralTexture = new ProceduralTextureBuilder(this.GraphicsDevice);
+            proceduralTexture = new TextureBuilder(this.GraphicsDevice);
 
             engine = new Engine(this);
             engine.Initialize();

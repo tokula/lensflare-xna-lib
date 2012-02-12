@@ -23,7 +23,7 @@ namespace Test2D {
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
-        ProceduralTextureBuilder proceduralTextureBuilder;
+        TextureBuilder proceduralTextureBuilder;
 
         public SmoothCamera2 camera = new SmoothCamera2();
 
@@ -54,7 +54,7 @@ namespace Test2D {
             graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            proceduralTextureBuilder = new ProceduralTextureBuilder(this.GraphicsDevice);
+            proceduralTextureBuilder = new TextureBuilder(this.GraphicsDevice);
 
             engine = new Engine(this);
             engine.Initialize();
@@ -98,7 +98,7 @@ namespace Test2D {
             Entity.Add(parallaxEntity);
 
             Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
-            Entity.Add(new GroundEntity(this));
+            Entity.Add(new GroundEntity(this, scratchedTexture));
             //Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 

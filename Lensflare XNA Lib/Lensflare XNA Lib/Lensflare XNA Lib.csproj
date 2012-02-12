@@ -125,7 +125,7 @@
     <Compile Include="src\Shape3\Shape.cs" />
     <Compile Include="src\Shape3\Sphere.cs" />
     <Compile Include="src\Shape3\Tetrahedron.cs" />
-    <Compile Include="src\Util\ProceduralTexture.cs" />
+    <Compile Include="src\Util\TextureBuilder.cs" />
     <Compile Include="src\Camera\SmoothCamera3.cs" />
   </ItemGroup>
   <ItemGroup>
