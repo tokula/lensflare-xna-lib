@@ -91,7 +91,8 @@ namespace Test2D {
             world = new World(Vector2.Zero);
 
             camera.PositionScreen = engine.ScreenCenter;
-            camera.Size = new Vector2(800, 600);
+            camera.Size = new Vector2(700, 500);
+            //camera.Size = new Vector2(engine.ScreenWidth, engine.ScreenWidth);
 
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
             parallaxEntity.texture1 = platesTexture;

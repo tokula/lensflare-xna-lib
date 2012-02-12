@@ -78,30 +78,31 @@ namespace Util {
 
             Debug.Assert(count >= 2 && count < width && count < height);
 
-            Texture2D[,] textures = new Texture2D[count,count];
+            int splittedWidth = width / count;
+            int splittedHeight = height / count;
+
+            Texture2D[,] splittedTextures = new Texture2D[count, count];
             for (int y = 0; y < count; ++y) {
                 for (int x = 0; x < count; ++x) {
-                    int splittedWidth = (width / count);
-                    int splittedHeight = (height / count);
                     Color[] colorData = new Color[width * height];
                     texture.GetData<Color>(colorData);
 
                     Color[] splittedColorData = new Color[splittedWidth * splittedHeight];
-                    for (int sy = 0; sy < splittedHeight; ++sy) {
-                        for (int sx = 0; sx < splittedWidth; ++sx) {
-                            int gx = x*splittedWidth+sx;
-                            int gy = y*splittedHeight+sy;
-                            splittedColorData[sy * splittedWidth + sx] = colorData[gy * width + gx];
+                    for (int splittedY = 0; splittedY < splittedHeight; ++splittedY) {
+                        for (int splittedX = 0; splittedX < splittedWidth; ++splittedX) {
+                            int textureX = x * splittedWidth + splittedX;
+                            int textureY = y * splittedHeight + splittedY;
+                            splittedColorData[splittedY * splittedWidth + splittedX] = colorData[textureY * width + textureX];
                         }
                     }
 
                     Texture2D splittedTexture = new Texture2D(g, splittedWidth, splittedHeight);
                     splittedTexture.SetData<Color>(splittedColorData);
 
-                    textures[x, y] = splittedTexture;
+                    splittedTextures[x, y] = splittedTexture;
                 }
             }
-            return textures;
+            return splittedTextures;
         }
     }
 }

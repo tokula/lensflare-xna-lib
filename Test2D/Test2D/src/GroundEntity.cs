@@ -14,10 +14,9 @@ namespace Test2D {
         LinkedList<EdgeShape> lineShapes = new LinkedList<EdgeShape>();
         bool[,] bitmap;
         float cellScale;
-        //Texture2D texture;
         Texture2D[,] textures;
 
-        const int splitCount = 16;
+        const int splitCount = 8;
 
         public GroundEntity(Game2D game, Texture2D texture) : base(game) {
             body = new Body(game.world);
@@ -27,7 +26,7 @@ namespace Test2D {
 
             this.cellScale = texture.Width / splitCount;
             CellMapBuilder cmb = new CellMapBuilder(Game.random);
-            bitmap = cmb.MakeBitmap(160, 160, CellMapBuilder.BitmapGenerationMode.Random);
+            bitmap = cmb.MakeBitmap(128, 128, CellMapBuilder.BitmapGenerationMode.Random);
             foreach (var vectorPair in cmb.VectorPairsList(cmb.MakeBorders(bitmap, cellScale))) {
                 EdgeShape lineShape = new EdgeShape(vectorPair[0], vectorPair[1]);
                 new Fixture(body, lineShape);
@@ -51,14 +50,21 @@ namespace Test2D {
             for (int y = 0; y < cellYCount; ++y) {
                 for (int x = 0; x < cellXCount; ++x) {
                     if (bitmap[x, y]) {
-                        Vector2 cellOffset = new Vector2(x, y) * cellScale;
-                        Game.spriteBatch.Draw(textures[x%splitCount, y%splitCount], screenPosition + cellOffset, Color.White);
+                        Vector2 cellPosition = screenPosition + new Vector2(x, y) * cellScale;
+                        Texture2D texture = textures[x%splitCount, y%splitCount];
+                        if (Game.camera.IsTextureVisible(texture, cellPosition)) {
+                            Game.spriteBatch.Draw(texture, cellPosition, Color.White);
+                        }
                     }
                 }
             }
 
             foreach (EdgeShape shape in lineShapes) {
-                Primitive2.DrawLine(Game.spriteBatch, screenPosition + shape.Vertex1, screenPosition + shape.Vertex2, Color.Yellow);
+                Vector2 point1 = screenPosition + shape.Vertex1;
+                Vector2 point2 = screenPosition + shape.Vertex2;
+                if(Game.camera.IsLineVisible(point1, point2)) {
+                    Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow);
+                }
             }
         }
     }
