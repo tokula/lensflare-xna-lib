@@ -14,16 +14,20 @@ namespace Test2D {
         LinkedList<EdgeShape> lineShapes = new LinkedList<EdgeShape>();
         bool[,] bitmap;
         float cellScale;
-        Texture2D texture;
+        //Texture2D texture;
+        Texture2D[,] textures;
+
+        const int splitCount = 16;
 
         public GroundEntity(Game2D game, Texture2D texture) : base(game) {
-            this.texture = texture;
             body = new Body(game.world);
             body.BodyType = BodyType.Static;
 
-            this.cellScale = 512;
+            this.textures = game.proceduralTextureBuilder.Split(texture, splitCount);
+
+            this.cellScale = texture.Width / splitCount;
             CellMapBuilder cmb = new CellMapBuilder(Game.random);
-            bitmap = cmb.MakeBitmap(16, 16, CellMapBuilder.BitmapGenerationMode.Random);
+            bitmap = cmb.MakeBitmap(160, 160, CellMapBuilder.BitmapGenerationMode.Random);
             foreach (var vectorPair in cmb.VectorPairsList(cmb.MakeBorders(bitmap, cellScale))) {
                 EdgeShape lineShape = new EdgeShape(vectorPair[0], vectorPair[1]);
                 new Fixture(body, lineShape);
@@ -48,7 +52,7 @@ namespace Test2D {
                 for (int x = 0; x < cellXCount; ++x) {
                     if (bitmap[x, y]) {
                         Vector2 cellOffset = new Vector2(x, y) * cellScale;
-                        Game.spriteBatch.Draw(texture, screenPosition + cellOffset, Color.White);
+                        Game.spriteBatch.Draw(textures[x%splitCount, y%splitCount], screenPosition + cellOffset, Color.White);
                     }
                 }
             }
