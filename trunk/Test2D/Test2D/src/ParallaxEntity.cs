@@ -27,7 +27,7 @@ namespace Test2D {
 
         public override void Draw() {
             Game.spriteBatch.Draw(texture1, Game.camera.PositionScreen - Game.camera.PositionWorld * 0.5f, Color.White);
-            //Game.spriteBatch.Draw(texture2, Game.camera.PositionScreen - Game.camera.PositionWorld * 1.0f, Color.White);
+            Game.spriteBatch.Draw(texture2, Game.camera.PositionScreen - Game.camera.PositionWorld * 0.75f, Color.White);
         }
     }
 }
