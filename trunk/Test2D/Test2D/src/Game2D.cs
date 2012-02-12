@@ -23,7 +23,7 @@ namespace Test2D {
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
         public SpriteBatch spriteBatch;
-        TextureBuilder proceduralTextureBuilder;
+        public TextureBuilder proceduralTextureBuilder;
 
         public SmoothCamera2 camera = new SmoothCamera2();
 
@@ -80,6 +80,7 @@ namespace Test2D {
             Texture2D platesTexture = Content.Load<Texture2D>("plates7");
             Texture2D scratchedTexture = Content.Load<Texture2D>("scratched2");
             circleTexture = Content.Load<Texture2D>("circle2");
+            Texture2D masontyStoneOnyxBlue = Content.Load<Texture2D>("Masonry.Stone.Onyx.Blue");
 
             kvm = new KeyValueManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow);
 
@@ -98,7 +99,7 @@ namespace Test2D {
             Entity.Add(parallaxEntity);
 
             Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
-            Entity.Add(new GroundEntity(this, scratchedTexture));
+            Entity.Add(new GroundEntity(this, masontyStoneOnyxBlue));
             //Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }
 
