@@ -99,7 +99,7 @@ namespace Test2D {
             parallaxEntity.texture2 = scratchedTexture;
             Entity.Add(parallaxEntity);
 
-            Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
+            //Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
             Entity.Add(new GroundEntity(this, masontyStoneOnyxBlue));
             //Entity.Add(new TestEntity(this, new Vector2(100, 50), 10, 1));
         }

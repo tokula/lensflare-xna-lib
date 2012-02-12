@@ -10,10 +10,7 @@ using Util;
 namespace Test2D {
     class WorldFrameEntity : GameEntity {
         Vector2 size;
-
         Body body;
-        //EdgeShape shape;
-        //Fixture fixture;
 
         public WorldFrameEntity(Game2D game, Vector2 position, Vector2 size) : base(game) {
             this.size = size;
@@ -21,8 +18,6 @@ namespace Test2D {
             body = new Body(game.world);
             body.BodyType = BodyType.Static;
 
-            //float x = position.X;
-            //float y = position.Y;
             float wHalf = size.X * 0.5f;
             float hHalf = size.Y * 0.5f;
 
