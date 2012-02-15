@@ -51,7 +51,7 @@ namespace Test2D {
         protected override void Initialize() {
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
-            graphics.PreferMultiSampling = true;
+            //graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
             proceduralTextureBuilder = new TextureBuilder(this.GraphicsDevice);
@@ -191,7 +191,7 @@ namespace Test2D {
 
             engine.Draw2D(gameTime);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             Entity.DrawAll();
 
