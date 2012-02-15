@@ -50,22 +50,36 @@ namespace Test2D {
             for (int y = 0; y < cellYCount; ++y) {
                 for (int x = 0; x < cellXCount; ++x) {
                     if (bitmap[x, y]) {
-                        Vector2 cellPosition = screenPosition + new Vector2(x, y) * cellScale;
+                        //Vector2 cellPosition = screenPosition + new Vector2(x, y) * cellScale;
                         Texture2D texture = textures[x%splitCount, y%splitCount];
+                        /*
                         if (Game.camera.IsTextureVisible(texture, cellPosition)) {
                             Game.spriteBatch.Draw(texture, cellPosition, Color.White);
+                        }*/
+
+
+                        for (int i = 0; i < 15; ++i) {
+                            float dist = i * 0.015f;
+                            float s = 1.0f - dist;
+                            Vector2 cellPosition = (Game.camera.PositionScreen - Game.camera.PositionWorld*s) + new Vector2(x, y) * s * cellScale;
+                            float layerCellScale = (1.0f-s)*0.5f;
+
+                            if (Game.camera.IsTextureVisible(texture, cellPosition)) {
+                                Game.spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, 1.0f * s, SpriteEffects.None, layerCellScale);
+                            }
                         }
                     }
                 }
             }
 
+            /*
             foreach (EdgeShape shape in lineShapes) {
                 Vector2 point1 = screenPosition + shape.Vertex1;
                 Vector2 point2 = screenPosition + shape.Vertex2;
                 if(Game.camera.IsLineVisible(point1, point2)) {
                     Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow);
                 }
-            }
+            }*/
         }
     }
 }
