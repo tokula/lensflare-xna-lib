@@ -37,13 +37,6 @@ namespace Test2D {
 
         Texture2D circleTexture;
 
-        public enum MainLayer {
-            Ground,
-            DynamicEntity,
-            Hud,
-            MouseCursor,
-        }
-
         public LayerManager layerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
 
         public Game2D() {
@@ -205,7 +198,7 @@ namespace Test2D {
             Entity.DrawAll();
 
             //camera:
-            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.Size * 0.5f, camera.Size, Color.White, false); //camera frame
+            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.Size * 0.5f, camera.Size, Color.White, false, layerManager.Depth((int)MainLayer.Hud)); //camera frame
 
             //hud:
             Vector2 mousePos = Input.MousePosition;
@@ -217,13 +210,14 @@ namespace Test2D {
 
             String fpsString = "FPS: " + engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
-            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
+            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth
 
             kvm.Draw();
 
-            Primitive2.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false);
-            Primitive2.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false);
-            Primitive2.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false);
+            float mouseLayerDepth = layerManager.Depth((int)MainLayer.MouseCursor);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false, mouseLayerDepth);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false, mouseLayerDepth);
+            Primitive2.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false, mouseLayerDepth);
 
             spriteBatch.End();
 

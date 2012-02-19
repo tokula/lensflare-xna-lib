@@ -110,6 +110,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\GroundEntity.cs" />
     <Compile Include="src\GameEntity.cs" />
+    <Compile Include="src\MainLayer.cs" />
     <Compile Include="src\ParallaxEntity.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Game2D.cs" />
