@@ -37,6 +37,15 @@ namespace Test2D {
 
         Texture2D circleTexture;
 
+        public enum MainLayer {
+            Ground,
+            DynamicEntity,
+            Hud,
+            MouseCursor,
+        }
+
+        public LayerManager layerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
+
         public Game2D() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
