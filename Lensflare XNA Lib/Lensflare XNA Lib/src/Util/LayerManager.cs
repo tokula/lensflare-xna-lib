@@ -11,11 +11,11 @@ namespace Util {
             this.layerCount = layerCount;
         }
 
-        float layerDepth(int layerIndex) {
+        public float Depth(int layerIndex) {
             return (float)layerIndex / (float)layerCount;
         }
 
-        float layerDepth(int layerIndex, float subdepth) {
+        public float Depth(int layerIndex, float subdepth) {
             return ((float)layerIndex + subdepth) / (float)layerCount;
         }
     }

@@ -76,7 +76,7 @@ namespace Test2D {
                 Vector2 point1 = screenPosition + shape.Vertex1;
                 Vector2 point2 = screenPosition + shape.Vertex2;
                 if(Game.camera.IsLineVisible(point1, point2)) {
-                    Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow);
+                    Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Ground));
                 }
             }
         }

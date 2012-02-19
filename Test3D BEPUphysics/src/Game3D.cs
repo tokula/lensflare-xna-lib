@@ -471,9 +471,9 @@ namespace EngineTest {
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
             spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
             if (freeCamera) {
-                Primitive2.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false);
-                Primitive2.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false);
-                Primitive2.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false, 1.0f);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false, 1.0f);
+                Primitive2.DrawCircle(spriteBatch, screenCenter, 6, Color.Blue, false, 1.0f);
             }
             spriteBatch.End();
 
