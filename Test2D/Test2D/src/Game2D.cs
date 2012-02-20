@@ -96,10 +96,12 @@ namespace Test2D {
             camera.Size = new Vector2(700, 500);
             //camera.Size = new Vector2(engine.ScreenWidth, engine.ScreenWidth);
 
+            /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
             parallaxEntity.texture1 = platesTexture;
             parallaxEntity.texture2 = scratchedTexture;
             Entity.Add(parallaxEntity);
+            */
 
             //Entity.Add(new WorldFrameEntity(this, Vector2.Zero, new Vector2(1000, 500)));
             Entity.Add(new GroundEntity(this, masontyStoneOnyxBlue));

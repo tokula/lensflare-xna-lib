@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Test2D {
     class ParallaxEntity : GameEntity {
-        public Texture2D texture1;
-        public Texture2D texture2;
+        public Texture2D texture1 = null;
+        public Texture2D texture2 = null;
 
         public ParallaxEntity(Game2D game) : base(game) {
 
