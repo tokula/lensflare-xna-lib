@@ -7,6 +7,7 @@ namespace Test2D {
     public enum MainLayer {
         MouseCursor,
         Hud,
+        Walls,
         DynamicEntity,
         Ground,
     }
