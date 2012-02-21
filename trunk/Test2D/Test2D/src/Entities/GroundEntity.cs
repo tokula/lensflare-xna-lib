@@ -15,6 +15,7 @@ namespace Test2D {
         bool[,] bitmap;
         float cellScale;
         Texture2D[,] textures;
+        Texture2D testLineTexture;
 
         const int splitCount = 8;
 
@@ -23,6 +24,7 @@ namespace Test2D {
             body.BodyType = BodyType.Static;
 
             this.textures = game.proceduralTextureBuilder.Split(texture, splitCount);
+            this.testLineTexture = Game.Content.Load<Texture2D>("line_c");
 
             this.cellScale = texture.Width / splitCount;
             CellMapBuilder cmb = new CellMapBuilder(Game.random);
@@ -57,7 +59,6 @@ namespace Test2D {
                             Game.spriteBatch.Draw(texture, cellPosition, Color.White);
                         }*/
 
-
                         for (int i = 0; i < 15; ++i) {
                             float dist = i * 0.015f;
                             float s = 1.0f - dist;
@@ -76,7 +77,8 @@ namespace Test2D {
                 Vector2 point1 = screenPosition + shape.Vertex1;
                 Vector2 point2 = screenPosition + shape.Vertex2;
                 if(Game.camera.IsLineVisible(point1, point2)) {
-                    Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Walls));
+                    Primitive2.DrawTextureLine(Game.spriteBatch, testLineTexture, point1, point2, testLineTexture.Height*0.25f, Color.White, Game.layerManager.Depth((int)MainLayer.Walls));
+                    //Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Walls));
                 }
             }
         }
