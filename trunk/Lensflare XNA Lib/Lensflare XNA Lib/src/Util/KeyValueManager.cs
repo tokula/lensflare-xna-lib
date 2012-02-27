@@ -8,10 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace Util {
     public class KeyValueManager {
-        SpriteBatch spriteBatch;
-        SpriteFont font;
-        Vector2 drawPosition;
-        Color textColor;
+        MessageManager messageManager;
 
         const int keyIndexBegin = (int)Keys.A;
         const int keyIndexEnd = (int)Keys.Z;
@@ -23,15 +20,8 @@ namespace Util {
         const Keys keyIncrease = Keys.PageUp;
         const Keys keyDecrease = Keys.PageDown;
 
-        const float timeToLiveForMessages = 2.0f;
-        float currentTimeToLiveForMessage;
-        Keys currentKeyForMessage = Keys.None;
-
-        public KeyValueManager(SpriteBatch spriteBatch, SpriteFont font, Vector2 drawPosition, Color textColor) {
-            this.spriteBatch = spriteBatch;
-            this.font = font;
-            this.drawPosition = drawPosition;
-            this.textColor = textColor;
+        public KeyValueManager(MessageManager messageManager) {
+            this.messageManager = messageManager;
 
             for (int i = 0; i < valueCount; ++i) {
                 valueSteps[i] = 1.0f;
@@ -39,8 +29,12 @@ namespace Util {
         }
 
         private void ValueChangedForKey(Keys key) {
-            currentTimeToLiveForMessage = timeToLiveForMessages;
-            currentKeyForMessage = key;
+            if (messageManager != null) {
+                int valueIndex = (int)key - keyIndexBegin;
+                String valueString = String.Format("{0:0.00}", values[valueIndex]);
+                String message = "" + key + " = " + valueString;
+                messageManager.AddMessage(message);
+            }
         }
 
         public float ValueForKey(Keys key) {
@@ -69,6 +63,7 @@ namespace Util {
 
         public void Update(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             KeyboardState keyboardState = Keyboard.GetState();
             for (int i = keyIndexBegin; i <= keyIndexEnd; ++i) {
                 Keys key = (Keys)i;
@@ -90,18 +85,14 @@ namespace Util {
                 }
             }
 
-            currentTimeToLiveForMessage -= elapsedSeconds;
-            if (currentTimeToLiveForMessage < 0) {
-                currentTimeToLiveForMessage = 0;
+            if (messageManager != null) {
+                messageManager.Update(gameTime);
             }
         }
 
         public void Draw() {
-            if (currentTimeToLiveForMessage > 0) {
-                float alphaFactor = currentTimeToLiveForMessage / timeToLiveForMessages;
-                Color color = textColor * alphaFactor * 4.0f;
-                String valueString = String.Format("{0:0.00}", values[(int)currentKeyForMessage - keyIndexBegin]);
-                spriteBatch.DrawString(font, "" + currentKeyForMessage + " = " + valueString, drawPosition, color);
+            if (messageManager != null) {
+                messageManager.Draw();
             }
         }
     }
