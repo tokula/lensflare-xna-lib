@@ -84,7 +84,7 @@ namespace Test2D {
             circleTexture = Content.Load<Texture2D>("circle2");
             Texture2D masontyStoneOnyxBlue = Content.Load<Texture2D>("Masonry.Stone.Onyx.Blue");
 
-            kvm = new KeyValueManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow);
+            kvm = new KeyValueManager(new MessageManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow, 2));
 
             Keys gravityKey = Keys.G;
             kvm.SetValueForKey(gravityKey, 100);

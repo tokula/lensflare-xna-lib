@@ -120,6 +120,7 @@
     <Compile Include="src\Util\IntVector2.cs" />
     <Compile Include="src\Util\KeyValueManager.cs" />
     <Compile Include="src\Util\LayerManager.cs" />
+    <Compile Include="src\Util\MessageManager.cs" />
     <Compile Include="src\Util\Primitive2.cs" />
     <Compile Include="src\Shape3\Arrow.cs" />
     <Compile Include="src\Shape3\Box.cs" />
