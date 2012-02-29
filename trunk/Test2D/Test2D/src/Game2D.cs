@@ -94,7 +94,7 @@ namespace Test2D {
 
             camera.PositionScreen = engine.ScreenCenter;
             //camera.Size = new Vector2(700, 500);
-            camera.Size = new Vector2(engine.ScreenWidth, engine.ScreenWidth);
+            camera.ViewSize = new Vector2(engine.ScreenWidth, engine.ScreenWidth);
 
             /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -119,8 +119,7 @@ namespace Test2D {
         protected void ProcessInput(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Vector2 mousePosition = Input.MousePosition;
-            Vector2 mouseWorldPosition = mousePosition - camera.PositionScreen + camera.PositionWorld;
+            Vector2 mouseWorldPosition = camera.WorldPointFromScreenPoint(Input.MousePosition);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) {
@@ -200,7 +199,7 @@ namespace Test2D {
             Entity.DrawAll();
 
             //camera:
-            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.Size * 0.5f, camera.Size, Color.White, false, layerManager.Depth((int)MainLayer.Hud)); //camera frame
+            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.ViewSize * 0.5f, camera.ViewSize, Color.White, false, layerManager.Depth((int)MainLayer.Hud)); //camera frame
 
             //hud:
             Vector2 mousePos = Input.MousePosition;
