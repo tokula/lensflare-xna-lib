@@ -6,19 +6,17 @@ using Microsoft.Xna.Framework;
 
 namespace Camera {
     public class SmoothCamera2 : Camera2 {
-        protected Vector2 velocity = Vector2.Zero;
-        protected float dampingFactor = 0.9f;
-
-        public Vector2 Velocity { get { return velocity; } set { velocity = value; } }
-        public float DampingFactor { get { return dampingFactor; } set { dampingFactor = value; } }
+        public Vector2 Velocity { get; set; }
+        public float DampingFactor { get; set; }
 
         public SmoothCamera2() : base() {
+            DampingFactor = 0.9f;
         }
 
         public override void Update(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            velocity *= (float)Math.Pow(dampingFactor * 0.01f, elapsedSeconds);
-            positionWorld += velocity * elapsedSeconds;
+            Velocity *= (float)Math.Pow(DampingFactor * 0.01f, elapsedSeconds);
+            PositionWorld += Velocity * elapsedSeconds;
             base.Update(gameTime);
         }
     }

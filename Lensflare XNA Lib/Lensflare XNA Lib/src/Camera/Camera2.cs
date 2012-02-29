@@ -7,27 +7,34 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Camera {
     public class Camera2 {
-        protected Vector2 positionWorld = Vector2.Zero;
-        protected Vector2 positionScreen = Vector2.Zero;
-        protected Vector2 size = new Vector2(100, 100);
-
-        public Vector2 PositionWorld { get { return positionWorld; } set { positionWorld = value; } }
-        public Vector2 PositionScreen { get { return positionScreen; } set { positionScreen = value; } }
-        public Vector2 Size { get { return size; } set { size = value; } }
+        public Vector2 PositionWorld { get; set; }
+        public Vector2 PositionScreen { get; set; }
+        public Vector2 ViewSize { get; set; }
+        public float Zoom { get; set; }
 
         public Camera2() {
+            ViewSize = new Vector2(100, 100);
+            Zoom = 1.0f;
         }
 
         public virtual void Update(GameTime gameTime) {
 
         }
 
+        public Vector2 ScreenPointFromWorldPoint(Vector2 worldPoint) {
+            return PositionScreen - PositionWorld + worldPoint;
+        }
+
+        public Vector2 WorldPointFromScreenPoint(Vector2 screenPoint) {
+            return screenPoint - PositionScreen + PositionWorld;
+        }
+
         public bool IsTextureVisible(Texture2D texture, Vector2 position) {
-            Vector2 v = positionScreen - size * 0.5f;
+            Vector2 v = PositionScreen - ViewSize * 0.5f;
             float cx1 = v.X;
             float cy1 = v.Y;
-            float cx2 = cx1 + size.X;
-            float cy2 = cy1 + size.Y;
+            float cx2 = cx1 + ViewSize.X;
+            float cy2 = cy1 + ViewSize.Y;
             
             float ex1 = position.X;
             float ey1 = position.Y;
@@ -38,11 +45,11 @@ namespace Camera {
         }
 
         public bool IsLineVisible(Vector2 point1, Vector2 point2) {
-            Vector2 v = positionScreen - size * 0.5f;
+            Vector2 v = PositionScreen - ViewSize * 0.5f;
             float cx1 = v.X;
             float cy1 = v.Y;
-            float cx2 = cx1 + size.X;
-            float cy2 = cy1 + size.Y;
+            float cx2 = cx1 + ViewSize.X;
+            float cy2 = cy1 + ViewSize.Y;
 
             float ex1 = point1.X;
             float ey1 = point1.Y;
