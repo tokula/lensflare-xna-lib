@@ -17,7 +17,7 @@ namespace Test2D {
         public Texture2D texture;
 
         public TestEntity(Game2D game, Vector2 position, float radius, float density) : base(game) {
-            body = new Body(game.world);
+            body = new Body(game.World);
             body.BodyType = BodyType.Dynamic;
             body.Position = position;
             //body.SleepingAllowed = false;
@@ -42,11 +42,11 @@ namespace Test2D {
             //Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
             //Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
             //Vector2 position = body.Position + screenPosition;
-            Vector2 position = Game.camera.ScreenPointFromWorldPoint(body.Position);
+            Vector2 position = Game.Camera.ScreenPointFromWorldPoint(body.Position);
             Rectangle rect = texture.Bounds;
             Vector2 origin = new Vector2(texture.Bounds.Center.X, texture.Bounds.Center.Y);
             float scale = 2.0f * shape.Radius / texture.Bounds.Height;
-            Game.spriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale, SpriteEffects.None, Game.layerManager.Depth((int)MainLayer.DynamicEntity));
+            Game.SpriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.DynamicEntity));
         }
     }
 }
