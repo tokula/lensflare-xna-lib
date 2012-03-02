@@ -34,9 +34,11 @@ namespace Util {
         }
 
         public static void DrawTextureLine(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 end, float thickness, Color color, float layerDepth) {
-            int distance = (int)Vector2.Distance(start, end);
+            //int distance = (int)Vector2.Distance(start, end);
+            float distance = Vector2.Distance(start, end);
             float rotationAngle = (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
-            spriteBatch.Draw(texture, new Rectangle((int)start.X, (int)start.Y, distance, (int)thickness), null, color, rotationAngle, new Vector2(0, 0.5f * texture.Height), SpriteEffects.None, layerDepth);
+            spriteBatch.Draw(texture, start, null, color, rotationAngle, new Vector2(0, 0.5f * texture.Height), new Vector2(distance / texture.Width, thickness / texture.Height), SpriteEffects.None, layerDepth);
+            //spriteBatch.Draw(texture, new Rectangle((int)start.X, (int)start.Y, distance, (int)thickness), null, color, rotationAngle, new Vector2(0, 0.5f * texture.Height), SpriteEffects.None, layerDepth);
         }
 
         public static void DrawRect(SpriteBatch spriteBatch, Vector2 position, Vector2 size, Color color, bool filled, float layerDepth) {

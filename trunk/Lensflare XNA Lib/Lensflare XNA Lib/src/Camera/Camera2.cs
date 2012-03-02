@@ -25,6 +25,10 @@ namespace Camera {
             return PositionScreen - PositionWorld + worldPoint;
         }
 
+        public Vector2 ScreenPointFromWorldPoint(Vector2 worldPoint, float depthScale) {
+            return PositionScreen - PositionWorld * depthScale + worldPoint;
+        }
+
         public Vector2 WorldPointFromScreenPoint(Vector2 screenPoint) {
             return screenPoint - PositionScreen + PositionWorld;
         }

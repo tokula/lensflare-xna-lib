@@ -7,6 +7,7 @@ using Util;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using Microsoft.Xna.Framework.Graphics;
+using Camera;
 
 namespace Test2D {
     class GroundEntity : GameEntity {
@@ -28,7 +29,7 @@ namespace Test2D {
 
             this.cellScale = texture.Width / splitCount;
             CellMapBuilder cmb = new CellMapBuilder(Game.random);
-            bitmap = cmb.MakeBitmap(128, 128, CellMapBuilder.BitmapGenerationMode.Random);
+            bitmap = cmb.MakeBitmap(64, 64, CellMapBuilder.BitmapGenerationMode.Random);
             foreach (var vectorPair in cmb.VectorPairsList(cmb.MakeBorders(bitmap, cellScale))) {
                 EdgeShape lineShape = new EdgeShape(vectorPair[0], vectorPair[1]);
                 new Fixture(body, lineShape);
@@ -45,7 +46,9 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
+            Camera2 camera = Game.camera;
+
+            //Vector2 screenPosition = camera.PositionScreen - camera.PositionWorld;
 
             int cellXCount = bitmap.GetLength(0);
             int cellYCount = bitmap.GetLength(1);
@@ -62,10 +65,11 @@ namespace Test2D {
                         for (int i = 0; i < 15; ++i) {
                             float dist = i * 0.015f;
                             float s = 1.0f - dist;
-                            Vector2 cellPosition = (Game.camera.PositionScreen - Game.camera.PositionWorld*s) + new Vector2(x, y) * s * cellScale;
+                            //Vector2 cellPosition = (Game.camera.PositionScreen - Game.camera.PositionWorld*s) + new Vector2(x, y) * s * cellScale;
+                            Vector2 cellPosition = camera.ScreenPointFromWorldPoint(new Vector2(x, y) * s * cellScale, s);
                             float layerCellScale = (1.0f-s)*0.5f;
 
-                            if (Game.camera.IsTextureVisible(texture, cellPosition)) {
+                            if (camera.IsTextureVisible(texture, cellPosition)) {
                                 Game.spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, 1.0f * s, SpriteEffects.None, Game.layerManager.Depth((int)MainLayer.Ground, layerCellScale));
                             }
                         }
@@ -74,8 +78,12 @@ namespace Test2D {
             }
 
             foreach (EdgeShape shape in lineShapes) {
-                Vector2 point1 = screenPosition + shape.Vertex1;
-                Vector2 point2 = screenPosition + shape.Vertex2;
+                //Vector2 point1 = screenPosition + shape.Vertex1;
+                //Vector2 point2 = screenPosition + shape.Vertex2;
+
+                Vector2 point1 = camera.ScreenPointFromWorldPoint(shape.Vertex1);
+                Vector2 point2 = camera.ScreenPointFromWorldPoint(shape.Vertex2);
+
                 if(Game.camera.IsLineVisible(point1, point2)) {
                     Primitive2.DrawTextureLine(Game.spriteBatch, testLineTexture, point1, point2, testLineTexture.Height*0.25f, Color.White, Game.layerManager.Depth((int)MainLayer.Walls));
                     //Primitive2.DrawLine(Game.spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Walls));
