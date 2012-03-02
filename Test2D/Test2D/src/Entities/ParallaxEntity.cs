@@ -7,6 +7,7 @@ using FarseerPhysics.Collision.Shapes;
 using Microsoft.Xna.Framework;
 using Util;
 using Microsoft.Xna.Framework.Graphics;
+using Camera;
 
 namespace Test2D {
     class ParallaxEntity : GameEntity {
@@ -26,8 +27,9 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Game.spriteBatch.Draw(texture1, Game.camera.PositionScreen - Game.camera.PositionWorld * 0.5f, Color.White);
-            Game.spriteBatch.Draw(texture2, Game.camera.PositionScreen - Game.camera.PositionWorld * 0.75f, Color.White);
+            Camera2 camera = Game.camera;
+            Game.spriteBatch.Draw(texture1, camera.ScreenPointFromWorldPoint(Vector2.Zero, 0.5f), Color.White);
+            Game.spriteBatch.Draw(texture2, camera.ScreenPointFromWorldPoint(Vector2.Zero, 0.75f), Color.White);
         }
     }
 }

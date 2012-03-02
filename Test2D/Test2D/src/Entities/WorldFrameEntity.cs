@@ -41,7 +41,8 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
+            //Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
+            Vector2 screenPosition = Game.camera.ScreenPointFromWorldPoint(Vector2.Zero);
             Primitive2.DrawRect(Game.spriteBatch, screenPosition + body.Position - size * 0.5f, size, Color.DarkGreen, false, Game.layerManager.Depth((int)MainLayer.Hud));
         }
     }
