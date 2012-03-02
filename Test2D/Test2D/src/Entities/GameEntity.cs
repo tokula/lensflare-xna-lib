@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace Test2D {
     abstract class GameEntity : Entity {
-        public Game2D Game { get; private set; }
+        public Game2D Game { get; protected set; }
 
         public GameEntity(Game2D game) {
             Game = game;
