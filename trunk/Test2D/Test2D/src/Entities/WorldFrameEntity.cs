@@ -15,7 +15,7 @@ namespace Test2D {
         public WorldFrameEntity(Game2D game, Vector2 position, Vector2 size) : base(game) {
             this.size = size;
 
-            body = new Body(game.world);
+            body = new Body(game.World);
             body.BodyType = BodyType.Static;
 
             float wHalf = size.X * 0.5f;
@@ -42,8 +42,8 @@ namespace Test2D {
 
         public override void Draw() {
             //Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
-            Vector2 screenPosition = Game.camera.ScreenPointFromWorldPoint(Vector2.Zero);
-            Primitive2.DrawRect(Game.spriteBatch, screenPosition + body.Position - size * 0.5f, size, Color.DarkGreen, false, Game.layerManager.Depth((int)MainLayer.Hud));
+            Vector2 screenPosition = Game.Camera.ScreenPointFromWorldPoint(Vector2.Zero);
+            Primitive2.DrawRect(Game.SpriteBatch, screenPosition + body.Position - size * 0.5f, size, Color.DarkGreen, false, Game.LayerManager.Depth((int)MainLayer.Hud));
         }
     }
 }

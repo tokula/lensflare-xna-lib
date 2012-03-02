@@ -22,22 +22,34 @@ namespace Test2D {
     /// </summary>
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
-        public SpriteBatch spriteBatch;
-        public TextureBuilder proceduralTextureBuilder;
+        
+        SpriteBatch spriteBatch;
+        public SpriteBatch SpriteBatch { get { return spriteBatch; } }
 
-        public SmoothCamera2 camera = new SmoothCamera2();
+        TextureBuilder proceduralTextureBuilder;
+        public TextureBuilder TextureBuilder { get { return proceduralTextureBuilder; } }
 
-        public Engine engine;
-        public World world;
-        public KeyValueManager kvm;
+        SmoothCamera2 camera = new SmoothCamera2();
+        public SmoothCamera2 Camera { get { return camera; } }
+
+        Engine engine;
+        public Engine Engine { get { return engine; } }
+
+        World world;
+        public World World { get { return world; } }
+
+        KeyValueManager kvm;
+        public KeyValueManager KeyValueManager { get { return kvm; } }
 
         SpriteFont defaultFont;
 
-        public Random random = new Random();
+        Random random = new Random();
+        public Random Random { get { return random; } }
 
         Texture2D circleTexture;
 
-        public LayerManager layerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
+        LayerManager layerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
+        public LayerManager LayerManager { get { return layerManager; } }
 
         public Game2D() {
             graphics = new GraphicsDeviceManager(this);
