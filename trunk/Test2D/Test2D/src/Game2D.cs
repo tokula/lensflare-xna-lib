@@ -22,38 +22,25 @@ namespace Test2D {
     /// </summary>
     public class Game2D : Microsoft.Xna.Framework.Game {
         GraphicsDeviceManager graphics;
-        
-        SpriteBatch spriteBatch;
-        public SpriteBatch SpriteBatch { get { return spriteBatch; } }
-
-        TextureBuilder proceduralTextureBuilder;
-        public TextureBuilder TextureBuilder { get { return proceduralTextureBuilder; } }
-
-        SmoothCamera2 camera = new SmoothCamera2();
-        public SmoothCamera2 Camera { get { return camera; } }
-
-        Engine engine;
-        public Engine Engine { get { return engine; } }
-
-        World world;
-        public World World { get { return world; } }
-
-        KeyValueManager kvm;
-        public KeyValueManager KeyValueManager { get { return kvm; } }
-
         SpriteFont defaultFont;
-
-        Random random = new Random();
-        public Random Random { get { return random; } }
-
         Texture2D circleTexture;
 
-        LayerManager layerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
-        public LayerManager LayerManager { get { return layerManager; } }
+        public SpriteBatch SpriteBatch          { get; protected set; }
+        public TextureBuilder TextureBuilder    { get; protected set; }
+        public Engine Engine                    { get; protected set; }
+        public World World                      { get; protected set; }
+        public KeyValueManager KeyValueManager  { get; protected set; }
+        public SmoothCamera2 Camera             { get; protected set; }
+        public Random Random                    { get; protected set; }
+        public LayerManager LayerManager        { get; protected set; }
 
         public Game2D() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            Camera = new SmoothCamera2();
+            Random = new Random();
+            LayerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
         }
 
         /// <summary>
@@ -68,10 +55,10 @@ namespace Test2D {
             //graphics.PreferMultiSampling = true;
             graphics.ApplyChanges();
 
-            proceduralTextureBuilder = new TextureBuilder(this.GraphicsDevice);
+            TextureBuilder = new TextureBuilder(this.GraphicsDevice);
 
-            engine = new Engine(this);
-            engine.Initialize();
+            Engine = new Engine(this);
+            Engine.Initialize();
 
             Window.Title = "XNA 2D Test";
 
@@ -86,9 +73,9 @@ namespace Test2D {
         /// all of your content.
         /// </summary>
         protected override void LoadContent() {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
+            SpriteBatch = new SpriteBatch(GraphicsDevice);
 
-            engine.Load();
+            Engine.Load();
 
             defaultFont = Content.Load<SpriteFont>("defaultFont");
             Texture2D platesTexture = Content.Load<Texture2D>("plates7");
@@ -96,17 +83,17 @@ namespace Test2D {
             circleTexture = Content.Load<Texture2D>("circle2");
             Texture2D masontyStoneOnyxBlue = Content.Load<Texture2D>("Masonry.Stone.Onyx.Blue");
 
-            kvm = new KeyValueManager(new MessageManager(spriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow, 2));
+            KeyValueManager = new KeyValueManager(new MessageManager(SpriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow, 2));
 
             Keys gravityKey = Keys.G;
-            kvm.SetValueForKey(gravityKey, 100);
-            kvm.SetValueStepForKey(gravityKey, 10);
+            KeyValueManager.SetValueForKey(gravityKey, 100);
+            KeyValueManager.SetValueStepForKey(gravityKey, 10);
 
-            world = new World(Vector2.Zero);
+            World = new World(Vector2.Zero);
 
-            camera.PositionScreen = engine.ScreenCenter;
+            Camera.PositionScreen = Engine.ScreenCenter;
             //camera.Size = new Vector2(700, 500);
-            camera.ViewSize = new Vector2(engine.ScreenWidth, engine.ScreenWidth);
+            Camera.ViewSize = new Vector2(Engine.ScreenWidth, Engine.ScreenWidth);
 
             /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -131,11 +118,27 @@ namespace Test2D {
         protected void ProcessInput(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Vector2 mouseWorldPosition = camera.WorldPointFromScreenPoint(Input.MousePosition);
+            Vector2 mouseWorldPosition = Camera.WorldPointFromScreenPoint(Input.MousePosition);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) {
                 this.Exit();
+            }
+
+            if (Input.KeyboardPressed(Keys.F7)) {
+                graphics.IsFullScreen = !graphics.IsFullScreen;
+                Vector2 viewSize;
+                if(graphics.IsFullScreen) {
+                    DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+                    viewSize = new Vector2(displayMode.Width, displayMode.Height);
+                } else {
+                    viewSize = new Vector2(1024, 768);
+                }
+                graphics.PreferredBackBufferWidth = (int)viewSize.X;
+                graphics.PreferredBackBufferHeight = (int)viewSize.Y;
+                graphics.ApplyChanges();
+                Camera.ViewSize = viewSize;
+                Camera.PositionScreen = viewSize * 0.5f;
             }
 
             float movementBoost = 1.0f;
@@ -147,7 +150,7 @@ namespace Test2D {
             float cameraMovementSpeedMouse = 100.0f * movementBoost * elapsedSeconds;
 
             if (Input.MousePressing(Input.MouseButton.LeftButton)) {
-                TestEntity testEntity = new TestEntity(this, mouseWorldPosition, random.Next(30, 60), 1.0f);
+                TestEntity testEntity = new TestEntity(this, mouseWorldPosition, Random.Next(30, 60), 1.0f);
                 testEntity.texture = circleTexture;
                 Entity.Add(testEntity);
             }
@@ -167,10 +170,10 @@ namespace Test2D {
                 arrowKeysVector.Y += 1.0f;
             }
 
-            camera.Velocity += arrowKeysVector * cameraMovementSpeedKeys;
+            Camera.Velocity += arrowKeysVector * cameraMovementSpeedKeys;
 
             if (Input.MousePressing(Input.MouseButton.MiddleButton)) {
-                camera.PositionWorld -= Input.MouseDelta;
+                Camera.PositionWorld -= Input.MouseDelta;
             }
         }
 
@@ -185,13 +188,13 @@ namespace Test2D {
 
                 ProcessInput(gameTime);
 
-                kvm.Update(gameTime);
+                KeyValueManager.Update(gameTime);
 
-                world.Gravity.Y = kvm.ValueForKey(Keys.G);
+                World.Gravity.Y = KeyValueManager.ValueForKey(Keys.G);
 
-                camera.Update(gameTime);
-                world.Step(elapsedSeconds);
-                engine.Update2D(gameTime);
+                Camera.Update(gameTime);
+                World.Step(elapsedSeconds);
+                Engine.Update2D(gameTime);
             }
 
             base.Update(gameTime);
@@ -204,14 +207,14 @@ namespace Test2D {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            engine.Draw2D(gameTime);
+            Engine.Draw2D(gameTime);
 
-            spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             Entity.DrawAll();
 
             //camera:
-            Primitive2.DrawRect(spriteBatch, camera.PositionScreen - camera.ViewSize * 0.5f, camera.ViewSize, Color.White, false, layerManager.Depth((int)MainLayer.Hud)); //camera frame
+            Primitive2.DrawRect(SpriteBatch, Camera.PositionScreen - Camera.ViewSize * 0.5f - Vector2.One, Camera.ViewSize + Vector2.One*2, Color.White, false, LayerManager.Depth((int)MainLayer.Hud)); //camera frame
 
             //hud:
             Vector2 mousePos = Input.MousePosition;
@@ -221,18 +224,18 @@ namespace Test2D {
                 Primitive2D.DrawCircle(spriteBatch, mousePosOffset, random.Next(4,8), Color.Yellow, false);
             }*/
 
-            String fpsString = "FPS: " + engine.Fps;
+            String fpsString = "FPS: " + Engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
-            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth
+            SpriteBatch.DrawString(defaultFont, fpsString, new Vector2(Engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth
 
-            kvm.Draw();
+            KeyValueManager.Draw();
 
-            float mouseLayerDepth = layerManager.Depth((int)MainLayer.MouseCursor);
-            Primitive2.DrawCircle(spriteBatch, mousePos, 4, Color.Blue, false, mouseLayerDepth);
-            Primitive2.DrawCircle(spriteBatch, mousePos, 5, Color.DarkBlue, false, mouseLayerDepth);
-            Primitive2.DrawCircle(spriteBatch, mousePos, 6, Color.Blue, false, mouseLayerDepth);
+            float mouseLayerDepth = LayerManager.Depth((int)MainLayer.MouseCursor);
+            Primitive2.DrawCircle(SpriteBatch, mousePos, 4, Color.Blue, false, mouseLayerDepth);
+            Primitive2.DrawCircle(SpriteBatch, mousePos, 5, Color.DarkBlue, false, mouseLayerDepth);
+            Primitive2.DrawCircle(SpriteBatch, mousePos, 6, Color.Blue, false, mouseLayerDepth);
 
-            spriteBatch.End();
+            SpriteBatch.End();
 
             base.Draw(gameTime);
         }
