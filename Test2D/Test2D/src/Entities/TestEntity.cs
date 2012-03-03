@@ -46,7 +46,7 @@ namespace Test2D {
             Rectangle rect = texture.Bounds;
             Vector2 origin = new Vector2(texture.Bounds.Center.X, texture.Bounds.Center.Y);
             float scale = 2.0f * shape.Radius / texture.Bounds.Height;
-            Game.SpriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.DynamicEntity));
+            Game.SpriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale * Game.Camera.Zoom, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.DynamicEntity));
         }
     }
 }

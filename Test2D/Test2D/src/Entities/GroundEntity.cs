@@ -71,7 +71,7 @@ namespace Test2D {
                             float layerCellScale = (1.0f-s)*0.5f;
 
                             if (camera.IsTextureVisible(texture, cellPosition)) {
-                                spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, 1.0f * s, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.Ground, layerCellScale));
+                                spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, 1.0f * s * camera.Zoom, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.Ground, layerCellScale));
                             }
                         }
                     }
@@ -86,7 +86,7 @@ namespace Test2D {
                 Vector2 point2 = camera.ScreenPointFromWorldPoint(shape.Vertex2);
 
                 if(camera.IsLineVisible(point1, point2)) {
-                    Primitive2.DrawTextureLine(spriteBatch, testLineTexture, point1, point2, testLineTexture.Height*0.25f, Color.White, Game.LayerManager.Depth((int)MainLayer.Walls));
+                    Primitive2.DrawTextureLine(spriteBatch, testLineTexture, point1, point2, testLineTexture.Height * 0.25f * camera.Zoom, Color.White, Game.LayerManager.Depth((int)MainLayer.Walls));
                     //Primitive2.DrawLine(spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Walls));
                 }
             }
