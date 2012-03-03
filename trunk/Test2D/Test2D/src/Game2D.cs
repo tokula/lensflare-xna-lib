@@ -89,6 +89,10 @@ namespace Test2D {
             KeyValueManager.SetValueForKey(gravityKey, 100);
             KeyValueManager.SetValueStepForKey(gravityKey, 10);
 
+            Keys zoomKey = Keys.Z;
+            KeyValueManager.SetValueForKey(zoomKey, 1.0f);
+            KeyValueManager.SetValueStepForKey(zoomKey, 0.05f);
+
             World = new World(Vector2.Zero);
 
             Camera.PositionScreen = Engine.ScreenCenter;
@@ -112,7 +116,7 @@ namespace Test2D {
         /// all content.
         /// </summary>
         protected override void UnloadContent() {
-            // TODO: Unload any non ContentManager content here
+            //Unload any non ContentManager content here
         }
 
         protected void ProcessInput(GameTime gameTime) {
@@ -191,6 +195,7 @@ namespace Test2D {
                 KeyValueManager.Update(gameTime);
 
                 World.Gravity.Y = KeyValueManager.ValueForKey(Keys.G);
+                Camera.Zoom = KeyValueManager.ValueForKey(Keys.Z);
 
                 Camera.Update(gameTime);
                 World.Step(elapsedSeconds);
