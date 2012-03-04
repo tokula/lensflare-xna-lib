@@ -49,29 +49,22 @@ namespace Test2D {
             Camera2 camera = Game.Camera;
             SpriteBatch spriteBatch = Game.SpriteBatch;
 
-            //Vector2 screenPosition = camera.PositionScreen - camera.PositionWorld;
-
             int cellXCount = bitmap.GetLength(0);
             int cellYCount = bitmap.GetLength(1);
             for (int y = 0; y < cellYCount; ++y) {
                 for (int x = 0; x < cellXCount; ++x) {
                     if (bitmap[x, y]) {
-                        //Vector2 cellPosition = screenPosition + new Vector2(x, y) * cellScale;
                         Texture2D texture = textures[x%splitCount, y%splitCount];
-                        /*
-                        if (Game.camera.IsTextureVisible(texture, cellPosition)) {
-                            Game.spriteBatch.Draw(texture, cellPosition, Color.White);
-                        }*/
 
-                        for (int i = 0; i < 15; ++i) {
+                        for (int i = 0; i < 1; ++i) {
                             float dist = i * 0.015f;
                             float s = 1.0f - dist;
-                            //Vector2 cellPosition = (Game.camera.PositionScreen - Game.camera.PositionWorld*s) + new Vector2(x, y) * s * cellScale;
                             Vector2 cellPosition = camera.Project(new Vector2(x, y) * s * cellScale, s);
                             float layerCellScale = (1.0f-s)*0.5f;
 
-                            if (camera.IsTextureVisible(texture, cellPosition)) {
-                                spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, 1.0f * s * camera.Zoom, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.Ground, layerCellScale));
+                            float textureScale = s * camera.Zoom;
+                            if (camera.OverlapsRect(cellPosition, texture.GetSize().Vector2 * textureScale)) {
+                                spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, textureScale, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.Ground, layerCellScale));
                             }
                         }
                     }
@@ -79,15 +72,11 @@ namespace Test2D {
             }
 
             foreach (EdgeShape shape in lineShapes) {
-                //Vector2 point1 = screenPosition + shape.Vertex1;
-                //Vector2 point2 = screenPosition + shape.Vertex2;
-
                 Vector2 point1 = camera.Project(shape.Vertex1);
                 Vector2 point2 = camera.Project(shape.Vertex2);
 
-                if(camera.IsLineVisible(point1, point2)) {
+                if(camera.OverlapsLine(point1, point2)) {
                     Primitive2.DrawTextureLine(spriteBatch, testLineTexture, point1, point2, testLineTexture.Height * 0.25f * camera.Zoom, Color.White, Game.LayerManager.Depth((int)MainLayer.Walls));
-                    //Primitive2.DrawLine(spriteBatch, point1, point2, Color.Yellow, Game.layerManager.Depth((int)MainLayer.Walls));
                 }
             }
         }

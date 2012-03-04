@@ -33,8 +33,9 @@ namespace Camera {
             return screenPoint / Zoom - PositionScreen / Zoom + PositionWorld;
         }
 
-        public bool IsTextureVisible(Texture2D texture, Vector2 position) {
+        public bool OverlapsRect(Vector2 position, Vector2 size) {
             Vector2 v = PositionScreen - ViewSize * 0.5f;
+
             float cx1 = v.X;
             float cy1 = v.Y;
             float cx2 = cx1 + ViewSize.X;
@@ -42,14 +43,15 @@ namespace Camera {
             
             float ex1 = position.X;
             float ey1 = position.Y;
-            float ex2 = ex1 + texture.Width;
-            float ey2 = ey1 + texture.Height;
+            float ex2 = ex1 + size.X;
+            float ey2 = ey1 + size.Y;
 
             return !(ex2 < cx1 || ex1 > cx2 || ey2 < cy1 || ey1 > cy2);
         }
 
-        public bool IsLineVisible(Vector2 point1, Vector2 point2) {
+        public bool OverlapsLine(Vector2 point1, Vector2 point2) {
             Vector2 v = PositionScreen - ViewSize * 0.5f;
+
             float cx1 = v.X;
             float cy1 = v.Y;
             float cx2 = cx1 + ViewSize.X;
@@ -61,6 +63,14 @@ namespace Camera {
             float ey2 = point2.Y;
 
             return (ex1 >= cx1 && ex1 <= cx2 && ey1 >= cy1 && ey1 <= cy2) || (ex2 >= cx1 && ex2 <= cx2 && ey2 >= cy1 && ey2 <= cy2);
+        }
+
+        public bool OverlapsWorldRect(Vector2 position, Vector2 size) {
+            return OverlapsRect(Project(position), size*Zoom);
+        }
+
+        public bool OverlapsWorldLine(Vector2 point1, Vector2 point2) {
+            return OverlapsLine(Project(point1), Project(point2));
         }
     }
 }
