@@ -17,10 +17,10 @@ namespace Camera {
         }
 
         public override void Update(GameTime gameTime) {
+            base.Update(gameTime);
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             velocity *= (float)Math.Pow(dampingFactor*0.01f, elapsedSeconds);
             position += velocity * elapsedSeconds;
-            base.Update(gameTime);
         }
     }
 }

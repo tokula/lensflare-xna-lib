@@ -65,6 +65,7 @@ namespace EngineTest {
 
             engine = new Engine(this);
             engine.Initialize();
+            engine.MouseCursorCentering = true;
 
             Window.Title = "XNA 3D Graphics with BEPUphysics";
 
