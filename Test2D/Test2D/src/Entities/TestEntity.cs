@@ -8,6 +8,9 @@ using LensflareGameFramework;
 using Util;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Common;
+using Camera;
 
 namespace Test2D {
     class TestEntity : GameEntity {
@@ -39,14 +42,14 @@ namespace Test2D {
         }
 
         public override void Draw() {
-            //Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
-            //Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
-            //Vector2 position = body.Position + screenPosition;
-            Vector2 position = Game.Camera.Project(body.Position);
-            Rectangle rect = texture.Bounds;
-            Vector2 origin = new Vector2(texture.Bounds.Center.X, texture.Bounds.Center.Y);
+            Camera2 camera = Game.Camera;
+            Vector2 position = camera.Project(body.Position);
+            Vector2 origin = texture.GetCenter();
             float scale = 2.0f * shape.Radius / texture.Bounds.Height;
-            Game.SpriteBatch.Draw(texture, position, rect, Color.White, body.Rotation, origin, scale * Game.Camera.Zoom, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.DynamicEntity));
+
+            if (camera.OverlapsWorldShape(shape, body)) {
+                Game.SpriteBatch.Draw(texture, position, null, Color.White, body.Rotation, origin, scale * camera.Zoom, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.DynamicEntity));
+            }
         }
     }
 }

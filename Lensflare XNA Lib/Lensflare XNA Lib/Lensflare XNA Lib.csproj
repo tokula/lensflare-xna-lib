@@ -113,6 +113,7 @@
     <Compile Include="src\Engine.cs" />
     <Compile Include="src\Extension\Enum.cs" />
     <Compile Include="src\Extension\GraphicsDeviceManager.cs" />
+    <Compile Include="src\Extension\Texture2D.cs" />
     <Compile Include="src\Extension\Viewport.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Shape3\Quad.cs" />

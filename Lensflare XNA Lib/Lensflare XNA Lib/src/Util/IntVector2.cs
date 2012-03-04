@@ -6,6 +6,7 @@ namespace Util {
         public int X, Y;
 
         public Vector2 Vector2 { get { return new Vector2(X, Y); } }
+        public IntVector2 Direction9State { get { return new IntVector2(X > 0 ? 1 : X < 0 ? -1 : 0, Y > 0 ? 1 : Y < 0 ? -1 : 0); } }
 
         public IntVector2(int x, int y) {
             this.X = x;
@@ -67,10 +68,6 @@ namespace Util {
 
         public static Vector2 operator *(IntVector2 v, float scale) {
             return new Vector2(v.X * scale, v.Y * scale);
-        }
-
-        public IntVector2 ToDirection8() {
-            return new IntVector2(X > 0 ? 1 : X < 0 ? -1 : 0, Y > 0 ? 1 : Y < 0 ? -1 : 0);
         }
     }
 }

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Util;
 
-namespace LensflareGameFramework {
+namespace Util {
     public static class ViewportExtension {
         public static IntVector2 GetSize(this Viewport viewport) {
             return new IntVector2(viewport.Width, viewport.Height);
