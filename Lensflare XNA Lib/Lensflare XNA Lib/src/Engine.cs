@@ -26,31 +26,6 @@ namespace LensflareGameFramework {
         }
     }
 
-    public static class ViewportExtension {
-        public static Vector2 GetSize(this Viewport viewport) {
-            return new Vector2(viewport.Width, viewport.Height);
-        }
-
-        public static Vector2 GetCenter(this Viewport viewport) {
-            return new Vector2(viewport.Width * 0.5f, viewport.Height * 0.5f);
-        }
-    }
-
-    public static class GraphicsDeviceManagerExtension {
-        public static void ApplyResolution(this GraphicsDeviceManager gdm, int width, int height, bool fullscreen) {
-            gdm.IsFullScreen = fullscreen;
-            gdm.PreferredBackBufferWidth = width;
-            gdm.PreferredBackBufferHeight = height;
-            gdm.ApplyChanges();
-        }
-    }
-
-    public static class EnumExtension {
-        public static int GetLength<T>() {
-            return Enum.GetNames(typeof(T)).Length;
-        }
-    }
-
     public class Engine {        
         RenderTarget2D renderTarget;
         Random random = new Random(); //TODO: needed?
