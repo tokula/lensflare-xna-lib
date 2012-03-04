@@ -28,11 +28,9 @@ namespace LensflareGameFramework {
 
     //TODO: projekt als lib
 
-    public class Engine {
-        //TODO: properties
-        
+    public class Engine {        
         RenderTarget2D renderTarget;
-        Random random = new Random();
+        Random random = new Random(); //TODO: needed?
         Vector3 debugVector = Vector3.Zero;
 
         public Game Game { get; protected set; }
@@ -50,9 +48,12 @@ namespace LensflareGameFramework {
         public float Fps { get; protected set; }
         public float FpsUpdateDelay { get; set; }
 
-        //TODO: auch set
+        public bool MouseCursorCentering { get; set; }
+
+        //TODO: auch set, außerdem umbenennen in viewport statt screen
         public int ScreenWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
         public int ScreenHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
+        public Vector2 ScreenSize { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width, vp.Height); } }
 
         public Vector2 ScreenCenter { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width * 0.5f, vp.Height * 0.5f); } }
 
@@ -97,6 +98,9 @@ namespace LensflareGameFramework {
         public void Update2D(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Entity.UpdateAll(gameTime);
+            if (MouseCursorCentering) {
+                CenterMouseCursor();
+            }
             Input.Update();
         }
 
@@ -104,11 +108,13 @@ namespace LensflareGameFramework {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             UpdateLight();
             Entity.UpdateAll(gameTime);
-            CenterMouseCursor(); //TODO: von bool abhängig machen
+            if (MouseCursorCentering) {
+                CenterMouseCursor();
+            }
             Input.Update();
         }
 
-        private void UpdateLight() {
+        protected void UpdateLight() {
             //Matrix lightsView = Matrix.CreateLookAt(lightPos, lightDirection, new Vector3(0, 1, 0));
             //Matrix lightsView = camera.view;
             Matrix lightsView = Matrix.CreateLookAt(lightPos, lightPos + Vector3.Normalize(lightDirection), new Vector3(0, 1, 0));
@@ -162,7 +168,7 @@ namespace LensflareGameFramework {
             ShadowMap = null;
         }
 
-        private void DrawScene(String technique) {
+        protected void DrawScene(String technique) {
             Effect.CurrentTechnique = Effect.Techniques[technique];
             Effect.Parameters["LightPos"].SetValue(lightPos);
             Effect.Parameters["LightPower"].SetValue(lightPower);
@@ -172,7 +178,7 @@ namespace LensflareGameFramework {
             Entity.DrawAll();
         }
 
-        private void CenterMouseCursor() {
+        protected void CenterMouseCursor() {
             Mouse.SetPosition(ScreenWidth / 2, ScreenHeight / 2);
         }
 
