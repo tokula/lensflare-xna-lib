@@ -42,7 +42,7 @@ namespace Test2D {
             //Vector2 screenPosition = Game.camera.PositionScreen - Game.camera.PositionWorld;
             //Primitive2.DrawCircle(Game.spriteBatch, screenPosition + body.Position, shape.Radius, new Color(1.0f, 0.5f, 0.0f, 0.5f), true);
             //Vector2 position = body.Position + screenPosition;
-            Vector2 position = Game.Camera.ScreenPointFromWorldPoint(body.Position);
+            Vector2 position = Game.Camera.Project(body.Position);
             Rectangle rect = texture.Bounds;
             Vector2 origin = new Vector2(texture.Bounds.Center.X, texture.Bounds.Center.Y);
             float scale = 2.0f * shape.Radius / texture.Bounds.Height;

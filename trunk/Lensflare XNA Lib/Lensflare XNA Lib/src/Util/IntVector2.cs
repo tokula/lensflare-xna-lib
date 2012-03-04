@@ -5,6 +5,8 @@ namespace Util {
     public struct IntVector2 {
         public int X, Y;
 
+        public Vector2 Vector2 { get { return new Vector2(X, Y); } }
+
         public IntVector2(int x, int y) {
             this.X = x;
             this.Y = y;
@@ -65,10 +67,6 @@ namespace Util {
 
         public static Vector2 operator *(IntVector2 v, float scale) {
             return new Vector2(v.X * scale, v.Y * scale);
-        }
-
-        public Vector2 ToFloatVector() {
-            return new Vector2(X, Y);
         }
 
         public IntVector2 ToDirection8() {

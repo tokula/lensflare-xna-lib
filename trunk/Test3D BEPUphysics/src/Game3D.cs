@@ -19,7 +19,6 @@ namespace EngineTest {
 	/// This is the main type for your game
 	/// </summary>
 	class Game3D : Microsoft.Xna.Framework.Game {
-		//public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
         public TextureBuilder proceduralTexture;
 
@@ -44,9 +43,9 @@ namespace EngineTest {
         bool planeGround = true;
 
 		public Game3D() {
-			//graphics = new GraphicsDeviceManager(this);
-
 			Content.RootDirectory = "Content";
+
+            engine = new Engine(this);
 		}
 
 		/// <summary>
@@ -56,17 +55,13 @@ namespace EngineTest {
 		/// and initialize them as well.
 		/// </summary>
 		protected override void Initialize() {
-            //graphics.PreferredBackBufferWidth = 1024;
-            //graphics.PreferredBackBufferHeight = 768;
+            engine.Initialize();
+            engine.MouseCursorCentering = true;
+
             engine.GraphicsDeviceManager.PreferMultiSampling = true;
-            //graphics.ApplyChanges();
             engine.GraphicsDeviceManager.ApplyResolution(1024, 768, false);
 
             proceduralTexture = new TextureBuilder(this.GraphicsDevice);
-
-            engine = new Engine(this);
-            engine.Initialize();
-            engine.MouseCursorCentering = true;
 
             Window.Title = "XNA 3D Graphics with BEPUphysics";
 

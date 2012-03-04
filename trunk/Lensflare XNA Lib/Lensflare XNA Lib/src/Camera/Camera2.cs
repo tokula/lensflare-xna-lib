@@ -21,16 +21,16 @@ namespace Camera {
 
         }
 
-        public Vector2 ScreenPointFromWorldPoint(Vector2 worldPoint) {
+        public Vector2 Project(Vector2 worldPoint) {
             return PositionScreen - PositionWorld * Zoom + worldPoint * Zoom;
         }
 
-        public Vector2 ScreenPointFromWorldPoint(Vector2 worldPoint, float depthScale) {
+        public Vector2 Project(Vector2 worldPoint, float depthScale) {
             return PositionScreen - PositionWorld * Zoom * depthScale + worldPoint * Zoom;
         }
 
-        public Vector2 WorldPointFromScreenPoint(Vector2 screenPoint) {
-            return screenPoint - PositionScreen + PositionWorld;
+        public Vector2 Unproject(Vector2 screenPoint) {
+            return screenPoint / Zoom - PositionScreen / Zoom + PositionWorld;
         }
 
         public bool IsTextureVisible(Texture2D texture, Vector2 position) {
