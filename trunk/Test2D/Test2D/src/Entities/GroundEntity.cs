@@ -56,14 +56,14 @@ namespace Test2D {
                     if (bitmap[x, y]) {
                         Texture2D texture = textures[x%splitCount, y%splitCount];
 
-                        for (int i = 0; i < 1; ++i) {
+                        for (int i = 0; i < 10; ++i) {
                             float dist = i * 0.015f;
                             float s = 1.0f - dist;
                             Vector2 cellPosition = camera.Project(new Vector2(x, y) * s * cellScale, s);
                             float layerCellScale = (1.0f-s)*0.5f;
 
                             float textureScale = s * camera.Zoom;
-                            if (camera.OverlapsRect(cellPosition, texture.GetSize().Vector2 * textureScale)) {
+                            if (camera.OverlapsRect(cellPosition, texture.GetSize() * textureScale)) {
                                 spriteBatch.Draw(texture, cellPosition, null, Color.White * s, 0.0f, Vector2.Zero, textureScale, SpriteEffects.None, Game.LayerManager.Depth((int)MainLayer.Ground, layerCellScale));
                             }
                         }

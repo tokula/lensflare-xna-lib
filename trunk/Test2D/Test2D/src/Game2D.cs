@@ -88,11 +88,15 @@ namespace Test2D {
             KeyValueManager.SetValueForKey(zoomKey, 1.0f);
             KeyValueManager.SetValueStepForKey(zoomKey, 0.05f);
 
+            Keys frustumKey = Keys.F;
+            KeyValueManager.SetValueForKey(frustumKey, 1.0f);
+            KeyValueManager.SetValueStepForKey(frustumKey, 0.05f);
+
             World = new World(Vector2.Zero);
 
             Camera.PositionScreen = Engine.Viewport.GetCenter();
-            Camera.ViewSize = new Vector2(700, 500);
-            //Camera.ViewSize = Engine.Viewport.GetSize().Vector2;
+            //Camera.ViewSize = new Vector2(700, 500);
+            Camera.ViewSize = Engine.Viewport.GetSize() * KeyValueManager.ValueForKey(Keys.F);
 
             /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -124,19 +128,20 @@ namespace Test2D {
                 this.Exit();
             }
 
+            DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
             if (Input.KeyboardPressed(Keys.F7)) {
                 IntVector2 viewSize;
                 bool switchToFullscreen = !Engine.GraphicsDeviceManager.IsFullScreen;
                 if(switchToFullscreen) {
-                    DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
                     viewSize = new IntVector2(displayMode.Width, displayMode.Height);
                 } else {
                     viewSize = new IntVector2(1024, 768);
                 }
                 Engine.GraphicsDeviceManager.ApplyResolution(viewSize.X, viewSize.Y, switchToFullscreen);
-                Camera.ViewSize = viewSize.Vector2;
-                Camera.PositionScreen = Camera.ViewSize * 0.5f;
+                //Camera.ViewSize = viewSize.Vector2;
+                Camera.PositionScreen = viewSize * 0.5f;
             }
+            Camera.ViewSize = Engine.Viewport.GetSize() * KeyValueManager.ValueForKey(Keys.F);
 
             float movementBoost = 1.0f;
             if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift)) {
@@ -212,7 +217,7 @@ namespace Test2D {
             Entity.DrawAll();
 
             //camera:
-            Primitive2.DrawRect(SpriteBatch, Camera.PositionScreen - Camera.ViewSize * 0.5f - Vector2.One, Camera.ViewSize + Vector2.One*2, Color.White, false, LayerManager.Depth((int)MainLayer.Hud)); //camera frame
+            Primitive2.DrawRect(SpriteBatch, new IntVector2(Camera.PositionScreen) - Camera.ViewSize * 0.5f - Vector2.One * 1.001f, Camera.ViewSize + Vector2.One * 2 * 1.001f, Color.White, false, LayerManager.Depth((int)MainLayer.Hud)); //camera frame
 
             //hud:
             Vector2 mousePos = Input.MousePosition;
