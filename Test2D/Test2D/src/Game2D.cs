@@ -21,7 +21,7 @@ namespace Test2D {
     /// This is the main type for your game
     /// </summary>
     public class Game2D : Microsoft.Xna.Framework.Game {
-        GraphicsDeviceManager graphics;
+        //GraphicsDeviceManager graphics;
         SpriteFont defaultFont;
         Texture2D circleTexture;
 
@@ -35,12 +35,14 @@ namespace Test2D {
         public LayerManager LayerManager        { get; protected set; }
 
         public Game2D() {
-            graphics = new GraphicsDeviceManager(this);
+            //graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             Camera = new SmoothCamera2();
             Random = new Random();
-            LayerManager = new LayerManager(Engine.GetEnumLength<MainLayer>());
+            LayerManager = new LayerManager(EnumExtension.GetLength<MainLayer>());
+
+            Engine = new Engine(this);
         }
 
         /// <summary>
@@ -50,15 +52,14 @@ namespace Test2D {
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize() {
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 768;
-            //graphics.PreferMultiSampling = true;
-            graphics.ApplyChanges();
+            Engine.Initialize();
+
+            //graphics.PreferredBackBufferWidth = 1024;
+            //graphics.PreferredBackBufferHeight = 768;
+            //graphics.ApplyChanges();
+            Engine.GraphicsDeviceManager.ApplyResolution(1024, 768, false);
 
             TextureBuilder = new TextureBuilder(this.GraphicsDevice);
-
-            Engine = new Engine(this);
-            Engine.Initialize();
 
             Window.Title = "XNA 2D Test";
 
@@ -95,9 +96,9 @@ namespace Test2D {
 
             World = new World(Vector2.Zero);
 
-            Camera.PositionScreen = Engine.ScreenCenter;
+            Camera.PositionScreen = Engine.Viewport.GetCenter();
             //camera.Size = new Vector2(700, 500);
-            Camera.ViewSize = Engine.ScreenSize;
+            Camera.ViewSize = Engine.Viewport.GetSize();
 
             /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -130,17 +131,19 @@ namespace Test2D {
             }
 
             if (Input.KeyboardPressed(Keys.F7)) {
-                graphics.IsFullScreen = !graphics.IsFullScreen;
+                //graphics.IsFullScreen = !graphics.IsFullScreen;
                 Vector2 viewSize;
-                if(graphics.IsFullScreen) {
+                bool switchToFullscreen = !Engine.GraphicsDeviceManager.IsFullScreen;
+                if(switchToFullscreen) {
                     DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
                     viewSize = new Vector2(displayMode.Width, displayMode.Height);
                 } else {
                     viewSize = new Vector2(1024, 768);
                 }
-                graphics.PreferredBackBufferWidth = (int)viewSize.X;
-                graphics.PreferredBackBufferHeight = (int)viewSize.Y;
-                graphics.ApplyChanges();
+                //graphics.PreferredBackBufferWidth = (int)viewSize.X;
+                //graphics.PreferredBackBufferHeight = (int)viewSize.Y;
+                //graphics.ApplyChanges();
+                Engine.GraphicsDeviceManager.ApplyResolution((int)viewSize.X, (int)viewSize.Y, switchToFullscreen);
                 Camera.ViewSize = viewSize;
                 Camera.PositionScreen = viewSize * 0.5f;
             }
@@ -231,7 +234,7 @@ namespace Test2D {
 
             String fpsString = "FPS: " + Engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
-            SpriteBatch.DrawString(defaultFont, fpsString, new Vector2(Engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth
+            SpriteBatch.DrawString(defaultFont, fpsString, new Vector2(Engine.Viewport.Width - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth
 
             KeyValueManager.Draw();
 

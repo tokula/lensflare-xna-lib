@@ -26,7 +26,30 @@ namespace LensflareGameFramework {
         }
     }
 
-    //TODO: projekt als lib
+    public static class ViewportExtension {
+        public static Vector2 GetSize(this Viewport viewport) {
+            return new Vector2(viewport.Width, viewport.Height);
+        }
+
+        public static Vector2 GetCenter(this Viewport viewport) {
+            return new Vector2(viewport.Width * 0.5f, viewport.Height * 0.5f);
+        }
+    }
+
+    public static class GraphicsDeviceManagerExtension {
+        public static void ApplyResolution(this GraphicsDeviceManager gdm, int width, int height, bool fullscreen) {
+            gdm.IsFullScreen = fullscreen;
+            gdm.PreferredBackBufferWidth = width;
+            gdm.PreferredBackBufferHeight = height;
+            gdm.ApplyChanges();
+        }
+    }
+
+    public static class EnumExtension {
+        public static int GetLength<T>() {
+            return Enum.GetNames(typeof(T)).Length;
+        }
+    }
 
     public class Engine {        
         RenderTarget2D renderTarget;
@@ -34,6 +57,7 @@ namespace LensflareGameFramework {
         Vector3 debugVector = Vector3.Zero;
 
         public Game Game { get; protected set; }
+        public GraphicsDeviceManager GraphicsDeviceManager { get; protected set; }
         public Effect Effect { get; protected set; }
         private Texture2D ShadowMap { get; set; } //TODO: evtl nicht nötig
 
@@ -50,27 +74,25 @@ namespace LensflareGameFramework {
 
         public bool MouseCursorCentering { get; set; }
 
-        //TODO: auch set, außerdem umbenennen in viewport statt screen
-        public int ScreenWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
-        public int ScreenHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
-        public Vector2 ScreenSize { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width, vp.Height); } }
+        public Viewport Viewport { get { return Game.GraphicsDevice.Viewport; } }
 
-        public Vector2 ScreenCenter { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width * 0.5f, vp.Height * 0.5f); } }
+        //TODO: auch set, außerdem umbenennen in viewport statt screen
+        /*
+        public int ViewportWidth { get { return Game.GraphicsDevice.Viewport.Width; } }
+        public int ViewportHeight { get { return Game.GraphicsDevice.Viewport.Height; }  }
+        public Vector2 ViewportSize { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width, vp.Height); } }
+        public Vector2 ViewportCenter { get { Viewport vp = Game.GraphicsDevice.Viewport; return new Vector2(vp.Width * 0.5f, vp.Height * 0.5f); } }*/
 
         //TODO: Constructor(), Initialize(), Load() evtl. zusammenfassen
-
-        //TODO: an eine zentrale Stelle verschieben
-        public static int GetEnumLength<T>() {
-            return Enum.GetNames(typeof(T)).Length;
-        }
 
         public Engine(Game game) {
             Game = game;
             FpsUpdateDelay = 0.5f;
+
+            GraphicsDeviceManager = new GraphicsDeviceManager(Game);
         }
 
         public void Initialize() {
-            CenterMouseCursor();
             Input.Update();
         }
 
@@ -93,6 +115,8 @@ namespace LensflareGameFramework {
 
             //PresentationParameters pp = game.GraphicsDevice.PresentationParameters;
             renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
+
+            CenterMouseCursor();
         }
 
         public void Update2D(GameTime gameTime) {
@@ -179,7 +203,8 @@ namespace LensflareGameFramework {
         }
 
         protected void CenterMouseCursor() {
-            Mouse.SetPosition(ScreenWidth / 2, ScreenHeight / 2);
+            Viewport vp = Viewport;
+            Mouse.SetPosition(vp.Width / 2, vp.Height / 2);
         }
 
         public static void DirectionToRotationMatrix(ref Vector3 direction, out Matrix m) {

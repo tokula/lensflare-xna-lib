@@ -19,7 +19,7 @@ namespace EngineTest {
 	/// This is the main type for your game
 	/// </summary>
 	class Game3D : Microsoft.Xna.Framework.Game {
-		public GraphicsDeviceManager graphics;
+		//public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch;
         public TextureBuilder proceduralTexture;
 
@@ -44,7 +44,7 @@ namespace EngineTest {
         bool planeGround = true;
 
 		public Game3D() {
-			graphics = new GraphicsDeviceManager(this);
+			//graphics = new GraphicsDeviceManager(this);
 
 			Content.RootDirectory = "Content";
 		}
@@ -56,10 +56,11 @@ namespace EngineTest {
 		/// and initialize them as well.
 		/// </summary>
 		protected override void Initialize() {
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.PreferMultiSampling = true;
-            graphics.ApplyChanges();
+            //graphics.PreferredBackBufferWidth = 1024;
+            //graphics.PreferredBackBufferHeight = 768;
+            engine.GraphicsDeviceManager.PreferMultiSampling = true;
+            //graphics.ApplyChanges();
+            engine.GraphicsDeviceManager.ApplyResolution(1024, 768, false);
 
             proceduralTexture = new TextureBuilder(this.GraphicsDevice);
 
@@ -464,13 +465,13 @@ namespace EngineTest {
             engine.Draw3D(gameTime);
 
             //hud:
-            Vector2 screenCenter = new Vector2(engine.ScreenWidth / 2, engine.ScreenHeight / 2);
+            Vector2 screenCenter = engine.Viewport.GetCenter();
             spriteBatch.Begin();
             spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
 
             String fpsString = "FPS: " + engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
-            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.ScreenWidth - fpsStringSize.X - 8, 0), Color.Blue);
+            spriteBatch.DrawString(defaultFont, fpsString, new Vector2(engine.Viewport.Width - fpsStringSize.X - 8, 0), Color.Blue);
             if (freeCamera) {
                 Primitive2.DrawCircle(spriteBatch, screenCenter, 4, Color.Blue, false, 1.0f);
                 Primitive2.DrawCircle(spriteBatch, screenCenter, 5, Color.DarkBlue, false, 1.0f);
