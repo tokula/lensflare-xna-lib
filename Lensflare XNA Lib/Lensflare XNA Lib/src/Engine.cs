@@ -5,27 +5,6 @@ using Microsoft.Xna.Framework.Input;
 using Util;
 
 namespace LensflareGameFramework {
-    //TODO: in eigene datei verschieben (oder löschen)
-    struct MyOwnVertexFormat : IVertexType {
-        public Vector3 position;
-        private Vector2 texCoord;
-        private Vector3 normal;
-
-        public readonly static VertexDeclaration vertexDeclaration = new VertexDeclaration(
-            new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-            new VertexElement(sizeof(float) * (3 + 2), VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
-            new VertexElement(sizeof(float) * 3, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
-        );
-
-        public VertexDeclaration VertexDeclaration { get { return vertexDeclaration; } }
-
-        public MyOwnVertexFormat(Vector3 position, Vector3 normal, Vector2 texCoord) {
-            this.position = position;
-            this.texCoord = texCoord;
-            this.normal = normal;
-        }
-    }
-
     public class Engine {        
         RenderTarget2D renderTarget;
         Random random = new Random(); //TODO: needed?

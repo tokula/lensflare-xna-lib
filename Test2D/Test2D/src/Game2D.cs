@@ -21,7 +21,6 @@ namespace Test2D {
     /// This is the main type for your game
     /// </summary>
     public class Game2D : Microsoft.Xna.Framework.Game {
-        //GraphicsDeviceManager graphics;
         SpriteFont defaultFont;
         Texture2D circleTexture;
 
@@ -35,7 +34,6 @@ namespace Test2D {
         public LayerManager LayerManager        { get; protected set; }
 
         public Game2D() {
-            //graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
             Camera = new SmoothCamera2();
@@ -53,10 +51,6 @@ namespace Test2D {
         /// </summary>
         protected override void Initialize() {
             Engine.Initialize();
-
-            //graphics.PreferredBackBufferWidth = 1024;
-            //graphics.PreferredBackBufferHeight = 768;
-            //graphics.ApplyChanges();
             Engine.GraphicsDeviceManager.ApplyResolution(1024, 768, false);
 
             TextureBuilder = new TextureBuilder(this.GraphicsDevice);
@@ -98,7 +92,7 @@ namespace Test2D {
 
             Camera.PositionScreen = Engine.Viewport.GetCenter();
             //camera.Size = new Vector2(700, 500);
-            Camera.ViewSize = Engine.Viewport.GetSize();
+            Camera.ViewSize = Engine.Viewport.GetSize().Vector2;
 
             /*
             ParallaxEntity parallaxEntity = new ParallaxEntity(this);
@@ -123,7 +117,7 @@ namespace Test2D {
         protected void ProcessInput(GameTime gameTime) {
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            Vector2 mouseWorldPosition = Camera.WorldPointFromScreenPoint(Input.MousePosition);
+            Vector2 mouseWorldPosition = Camera.Unproject(Input.MousePosition);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape)) {
@@ -131,21 +125,17 @@ namespace Test2D {
             }
 
             if (Input.KeyboardPressed(Keys.F7)) {
-                //graphics.IsFullScreen = !graphics.IsFullScreen;
-                Vector2 viewSize;
+                IntVector2 viewSize;
                 bool switchToFullscreen = !Engine.GraphicsDeviceManager.IsFullScreen;
                 if(switchToFullscreen) {
                     DisplayMode displayMode = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
-                    viewSize = new Vector2(displayMode.Width, displayMode.Height);
+                    viewSize = new IntVector2(displayMode.Width, displayMode.Height);
                 } else {
-                    viewSize = new Vector2(1024, 768);
+                    viewSize = new IntVector2(1024, 768);
                 }
-                //graphics.PreferredBackBufferWidth = (int)viewSize.X;
-                //graphics.PreferredBackBufferHeight = (int)viewSize.Y;
-                //graphics.ApplyChanges();
-                Engine.GraphicsDeviceManager.ApplyResolution((int)viewSize.X, (int)viewSize.Y, switchToFullscreen);
-                Camera.ViewSize = viewSize;
-                Camera.PositionScreen = viewSize * 0.5f;
+                Engine.GraphicsDeviceManager.ApplyResolution(viewSize.X, viewSize.Y, switchToFullscreen);
+                Camera.ViewSize = viewSize.Vector2;
+                Camera.PositionScreen = Camera.ViewSize * 0.5f;
             }
 
             float movementBoost = 1.0f;
@@ -227,11 +217,6 @@ namespace Test2D {
             //hud:
             Vector2 mousePos = Input.MousePosition;
             
-            /*for(int i=0; i<10000; ++i) {
-                Vector2 mousePosOffset = mousePos + new Vector2((float)random.NextDouble() * 100, (float)random.NextDouble() * 100);
-                Primitive2D.DrawCircle(spriteBatch, mousePosOffset, random.Next(4,8), Color.Yellow, false);
-            }*/
-
             String fpsString = "FPS: " + Engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
             SpriteBatch.DrawString(defaultFont, fpsString, new Vector2(Engine.Viewport.Width - fpsStringSize.X - 8, 0), Color.Blue); //TODO: layerDepth

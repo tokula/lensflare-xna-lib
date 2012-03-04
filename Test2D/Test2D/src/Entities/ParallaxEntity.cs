@@ -28,8 +28,8 @@ namespace Test2D {
 
         public override void Draw() {
             Camera2 camera = Game.Camera;
-            Game.SpriteBatch.Draw(texture1, camera.ScreenPointFromWorldPoint(Vector2.Zero, 0.5f), Color.White);
-            Game.SpriteBatch.Draw(texture2, camera.ScreenPointFromWorldPoint(Vector2.Zero, 0.75f), Color.White);
+            Game.SpriteBatch.Draw(texture1, camera.Project(Vector2.Zero, 0.5f), Color.White);
+            Game.SpriteBatch.Draw(texture2, camera.Project(Vector2.Zero, 0.75f), Color.White);
         }
     }
 }

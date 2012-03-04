@@ -67,7 +67,7 @@ namespace Test2D {
                             float dist = i * 0.015f;
                             float s = 1.0f - dist;
                             //Vector2 cellPosition = (Game.camera.PositionScreen - Game.camera.PositionWorld*s) + new Vector2(x, y) * s * cellScale;
-                            Vector2 cellPosition = camera.ScreenPointFromWorldPoint(new Vector2(x, y) * s * cellScale, s);
+                            Vector2 cellPosition = camera.Project(new Vector2(x, y) * s * cellScale, s);
                             float layerCellScale = (1.0f-s)*0.5f;
 
                             if (camera.IsTextureVisible(texture, cellPosition)) {
@@ -82,8 +82,8 @@ namespace Test2D {
                 //Vector2 point1 = screenPosition + shape.Vertex1;
                 //Vector2 point2 = screenPosition + shape.Vertex2;
 
-                Vector2 point1 = camera.ScreenPointFromWorldPoint(shape.Vertex1);
-                Vector2 point2 = camera.ScreenPointFromWorldPoint(shape.Vertex2);
+                Vector2 point1 = camera.Project(shape.Vertex1);
+                Vector2 point2 = camera.Project(shape.Vertex2);
 
                 if(camera.IsLineVisible(point1, point2)) {
                     Primitive2.DrawTextureLine(spriteBatch, testLineTexture, point1, point2, testLineTexture.Height * 0.25f * camera.Zoom, Color.White, Game.LayerManager.Depth((int)MainLayer.Walls));
