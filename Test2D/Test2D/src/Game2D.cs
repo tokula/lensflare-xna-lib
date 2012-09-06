@@ -23,6 +23,7 @@ namespace Test2D {
     public class Game2D : Microsoft.Xna.Framework.Game {
         SpriteFont defaultFont;
         Texture2D circleTexture;
+        public Texture2D lineTexture;
 
         public SpriteBatch SpriteBatch          { get; protected set; }
         public TextureBuilder TextureBuilder    { get; protected set; }
@@ -32,6 +33,7 @@ namespace Test2D {
         public SmoothCamera2 Camera             { get; protected set; }
         public Random Random                    { get; protected set; }
         public LayerManager LayerManager        { get; protected set; }
+        public WormEntity Worm                  { get; protected set; }
 
         public Game2D() {
             Content.RootDirectory = "Content";
@@ -77,6 +79,7 @@ namespace Test2D {
             Texture2D scratchedTexture = Content.Load<Texture2D>("scratched2");
             circleTexture = Content.Load<Texture2D>("circle2");
             Texture2D masontyStoneOnyxBlue = Content.Load<Texture2D>("Masonry.Stone.Onyx.Blue");
+            lineTexture = Content.Load<Texture2D>("line_c");
 
             KeyValueManager = new KeyValueManager(new MessageManager(SpriteBatch, defaultFont, new Vector2(8, 8), Color.Yellow, 2));
 
@@ -157,6 +160,20 @@ namespace Test2D {
                 Entity.Add(testEntity);
             }
 
+            if (Input.KeyboardPressed(Keys.P)) {
+                if (Worm == null) {
+                    Worm = new WormEntity(this, mouseWorldPosition);
+                    Worm.texture = circleTexture;
+                    Entity.Add(Worm);
+                }
+            }
+
+            if (Input.KeyboardPressed(Keys.Space)) {
+                if (Worm != null) {
+                    Worm.ToggleRope();
+                }
+            }
+
             Vector2 arrowKeysVector = Vector2.Zero;
 
             if (Keyboard.GetState().IsKeyDown(Keys.Left)) {
@@ -172,7 +189,15 @@ namespace Test2D {
                 arrowKeysVector.Y += 1.0f;
             }
 
-            Camera.Velocity += arrowKeysVector * cameraMovementSpeedKeys;
+            bool arrowKeyScrolling = false;
+            if (arrowKeyScrolling) {
+                Camera.Velocity += arrowKeysVector * cameraMovementSpeedKeys;
+            } else {
+                if (Worm != null) {
+                    float accelerationFactor = 1000000.0f;
+                    Worm.AccelerateBy(arrowKeysVector * accelerationFactor);
+                }
+            }
 
             if (Input.MousePressing(Input.MouseButton.MiddleButton)) {
                 Camera.PositionWorld -= Input.MouseDelta;
