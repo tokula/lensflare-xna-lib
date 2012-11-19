@@ -12,7 +12,7 @@ namespace LensflareGameFramework {
 
         public Game Game { get; protected set; }
         public GraphicsDeviceManager GraphicsDeviceManager { get; protected set; }
-        public Effect Effect { get; protected set; }
+        public Effect Effect { get; set; }
         private Texture2D ShadowMap { get; set; } //TODO: evtl nicht nötig
 
         public float ambientPower = 0.2f;
@@ -65,7 +65,7 @@ namespace LensflareGameFramework {
             //Game.GraphicsDevice.BlendState = BlendState.Additive; //TODO: texturen mit alpha 0.5 sind trotzdem nicht transparent
 
             //effect = new BasicEffect(GraphicsDevice);
-            Effect = Game.Content.Load<Effect>("TestEffect");
+            //Effect = Game.Content.Load<Effect>("TestEffect");
 
             //PresentationParameters pp = game.GraphicsDevice.PresentationParameters;
             renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);

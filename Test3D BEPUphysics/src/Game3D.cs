@@ -76,6 +76,7 @@ namespace EngineTest {
 			spriteBatch = new SpriteBatch(GraphicsDevice);
 
             engine.Load();
+            engine.Effect = Content.Load<Effect>("TestEffect");
 
 			camera = new SmoothCamera3();
             camera.AspectRatio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;

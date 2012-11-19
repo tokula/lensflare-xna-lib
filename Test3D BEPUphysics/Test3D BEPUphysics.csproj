@@ -183,6 +183,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Lensflare XNA Lib\Lensflare XNA Lib Content\Lensflare XNA Lib Content.contentproj">
+      <Project>{0C0B270B-7329-4C91-B443-5128208B357E}</Project>
+      <Name>Lensflare XNA Lib Content %28Content%29</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
     <ProjectReference Include="..\Lensflare XNA Lib\Lensflare XNA Lib\Lensflare XNA Lib.csproj">
       <Project>{5F41E60D-051B-4BF7-A67B-49335F565536}</Project>
       <Name>Lensflare XNA Lib</Name>
