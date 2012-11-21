@@ -14,6 +14,10 @@ namespace Util {
             this.g = g;
         }
 
+        protected Color BlendColors(Color color1, Color color2, float blend) {
+            return (color1 * blend).Sum(color2 * (1.0f-blend));
+        }
+
         public Texture2D TextureFromColor(Color color) {
             Texture2D texture = new Texture2D(g, 1, 1);
             texture.SetData<Color>(new Color[] { color });
@@ -48,6 +52,21 @@ namespace Util {
                     cy = y - height / 2;
                     float alphaFactor = 1.0f - ((float)Math.Sqrt(cx * cx + cy * cy) / width * 2.0f);
                     colors1D[i++] = color * alphaFactor; 
+                }
+            }
+            Debug.Assert(i == colors1D.Length);
+            texture.SetData(colors1D);
+            return texture;
+        }
+
+        public Texture2D VerticalGradient(int width, int height, Color colorTop, Color colorBottom) {
+            Texture2D texture = new Texture2D(g, width, height);
+            Color[] colors1D = new Color[width * height];
+            int i = 0;
+            for (int y = 0; y < height; ++y) {
+                Color color = BlendColors(colorTop, colorBottom, 1.0f - (float)y / (float)(height - 1));
+                for (int x = 0; x < width; ++x) {
+                    colors1D[i++] = color;
                 }
             }
             Debug.Assert(i == colors1D.Length);
