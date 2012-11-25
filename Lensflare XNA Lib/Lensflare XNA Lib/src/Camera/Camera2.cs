@@ -28,7 +28,7 @@ namespace Camera {
         public Vector2 Project(Vector2 worldPoint, float depthScale) {
             float z = (float)Math.Pow(Zoom, depthScale);
           //return PositionScreen - PositionWorld * Zoom * depthScale + worldPoint * Zoom;
-            return PositionScreen - PositionWorld * z * depthScale + worldPoint * z;
+            return PositionScreen - PositionWorld * z * depthScale + worldPoint * z; //TODO: does not work correctly when zoomed out very far.
         }
 
         public Vector2 Unproject(Vector2 screenPoint) {

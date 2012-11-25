@@ -13,6 +13,8 @@ namespace Camera {
             DampingFactor = 0.9f;
         }
 
+        //TODO: zoom velocity and damping for smooth zooming
+
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
             float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
