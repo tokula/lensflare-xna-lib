@@ -114,6 +114,7 @@
     <Compile Include="src\Camera\SmoothCamera2.cs" />
     <Compile Include="src\Entity.cs" />
     <Compile Include="src\Engine.cs" />
+    <Compile Include="src\Extension\Class.cs" />
     <Compile Include="src\Extension\Color.cs" />
     <Compile Include="src\Extension\Enum.cs" />
     <Compile Include="src\Extension\GraphicsDeviceManager.cs" />
