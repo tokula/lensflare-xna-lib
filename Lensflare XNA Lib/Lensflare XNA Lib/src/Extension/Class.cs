@@ -7,7 +7,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Util {
     public static class ClassExtension {
-        // Deep clone
         public static T DeepClone<T>(this T a) {
             using (MemoryStream stream = new MemoryStream()) {
                 BinaryFormatter formatter = new BinaryFormatter();
