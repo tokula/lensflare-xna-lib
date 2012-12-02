@@ -74,16 +74,22 @@ namespace LensflareGameFramework {
         }
 
         public void Update2D(GameTime gameTime) {
-            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            Entity.UpdateAll(gameTime);
+            Update2D(gameTime, true, true);
+        }
+
+        public void Update2D(GameTime gameTime, bool entities, bool input) {
+            if (entities) {
+                Entity.UpdateAll(gameTime);
+            }
             if (MouseCursorCentering) {
                 CenterMouseCursor();
             }
-            Input.Update();
+            if (input) {
+                Input.Update();
+            }
         }
 
         public void Update3D(GameTime gameTime) {
-            float elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
             UpdateLight();
             Entity.UpdateAll(gameTime);
             if (MouseCursorCentering) {
