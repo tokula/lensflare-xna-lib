@@ -59,6 +59,45 @@ namespace Util {
             return texture;
         }
 
+        protected float HillFunction(float x, float bottomInside, float top, float bottomOutside, float increaseLength, float topLength, float decreaseLength) {
+            float bottomLength = 1.0f - increaseLength - decreaseLength - topLength;
+
+            float y;
+            if (x < bottomLength) {
+                y = bottomInside;
+            } else if (x < bottomLength + increaseLength) {
+                y = (x - bottomLength) * (top - bottomInside) / increaseLength + bottomInside;
+            } else if (x < bottomLength + increaseLength + topLength) {
+                y = top;
+            } else if (x < bottomLength + increaseLength + topLength + decreaseLength) {
+                y = (1.0f - (x - bottomLength - increaseLength - topLength) / decreaseLength) * (top - bottomOutside) + bottomOutside;
+            } else {
+                y = bottomOutside;
+            }
+            return y;
+        }
+
+        public Texture2D Ring(int size, Color color, HillFunctionParameters fp) {
+            int width = size;
+            int height = size;
+            float radius = size * 0.5f;
+            Texture2D texture = new Texture2D(g, width, height);
+            Color[] colors1D = new Color[width * height];
+            int i = 0;
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    float distX = x - radius;
+                    float distY = y - radius;
+                    float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
+                    float alphaFactor = HillFunction(dist / radius, fp.bottomInside, fp.top, fp.bottomOutside, fp.increaseLength, fp.topLength, fp.decreaseLength);
+                    colors1D[i++] = color * alphaFactor;
+                }
+            }
+            Debug.Assert(i == colors1D.Length);
+            texture.SetData(colors1D);
+            return texture;
+        }
+
         public Texture2D VerticalGradient(int width, int height, Color colorTop, Color colorBottom) {
             Texture2D texture = new Texture2D(g, width, height);
             Color[] colors1D = new Color[width * height];
@@ -123,5 +162,9 @@ namespace Util {
             }
             return splittedTextures;
         }
+    }
+
+    public struct HillFunctionParameters {
+        public float bottomInside, top, bottomOutside, increaseLength, topLength, decreaseLength;
     }
 }
