@@ -98,6 +98,43 @@ namespace Util {
             return texture;
         }
 
+        public Texture2D Sphere(int size, Color color) {
+            int width = size;
+            int height = size;
+            float radius = size * 0.5f;
+            Texture2D texture = new Texture2D(g, width, height);
+            Color[] colors1D = new Color[width * height];
+
+            float distTop = radius-1;
+            float distDecrease = 1.0f;
+
+            int i = 0;
+            for (int y = 0; y < height; ++y) {
+                for (int x = 0; x < width; ++x) {
+                    float distX = x - radius;
+                    float distY = y - radius;
+                    float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
+                    float normalizedDist = dist / radius;
+                    float brightness = (float)(Math.Acos(normalizedDist) / (Math.PI * 0.5));
+                    Color shadedColor = new Color(color.ToVector3() * brightness);
+
+                    float alphaFactor;
+                    if (dist <= distTop) {
+                        alphaFactor = 1.0f;
+                    } else if(dist > distTop && dist <= distTop+distDecrease) {
+                        alphaFactor = 1.0f - (dist - distTop) / distDecrease;
+                    } else {
+                        alphaFactor = 0.0f;
+                    }
+
+                    colors1D[i++] = shadedColor * alphaFactor;
+                }
+            }
+            Debug.Assert(i == colors1D.Length);
+            texture.SetData(colors1D);
+            return texture;
+        }
+
         public Texture2D VerticalGradient(int width, int height, Color colorTop, Color colorBottom) {
             Texture2D texture = new Texture2D(g, width, height);
             Color[] colors1D = new Color[width * height];
