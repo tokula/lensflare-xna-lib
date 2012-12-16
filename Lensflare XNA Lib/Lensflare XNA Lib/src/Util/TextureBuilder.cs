@@ -20,7 +20,7 @@ namespace Util {
             colors1D = new Color[size.X * size.Y];
         }
 
-        public Texture2D Render(GraphicsDevice g) {
+        public Texture2D BuildTexture(GraphicsDevice g) {
             Texture2D texture = new Texture2D(g, Size.X, Size.Y);
 
             int i = 0;
@@ -47,6 +47,24 @@ namespace Util {
             return (color1 * blend).Sum(color2 * (1.0f-blend));
         }
 
+        protected float HillFunction(float x, float bottomInside, float top, float bottomOutside, float increaseLength, float topLength, float decreaseLength) {
+            float bottomLength = 1.0f - increaseLength - decreaseLength - topLength;
+
+            float y;
+            if (x < bottomLength) {
+                y = bottomInside;
+            } else if (x < bottomLength + increaseLength) {
+                y = (x - bottomLength) * (top - bottomInside) / increaseLength + bottomInside;
+            } else if (x < bottomLength + increaseLength + topLength) {
+                y = top;
+            } else if (x < bottomLength + increaseLength + topLength + decreaseLength) {
+                y = (1.0f - (x - bottomLength - increaseLength - topLength) / decreaseLength) * (top - bottomOutside) + bottomOutside;
+            } else {
+                y = bottomOutside;
+            }
+            return y;
+        }
+
         public Texture2D TextureFromColor(Color color) {
             Texture2D texture = new Texture2D(g, 1, 1);
             texture.SetData<Color>(new Color[] { color });
@@ -70,61 +88,23 @@ namespace Util {
         }
 
         public Texture2D EuclideanDistance(int width, int height, Color color) {
-            Texture2D texture = new Texture2D(g, width, height);
-            Color[] colors1D = new Color[width * height];
-            int i = 0;
-            int cx;
-            int cy;
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    cx = x - width / 2;
-                    cy = y - height / 2;
-                    float alphaFactor = 1.0f - ((float)Math.Sqrt(cx * cx + cy * cy) / width * 2.0f);
-                    colors1D[i++] = color * alphaFactor; 
-                }
-            }
-            Debug.Assert(i == colors1D.Length);
-            texture.SetData(colors1D);
-            return texture;
-        }
-
-        protected float HillFunction(float x, float bottomInside, float top, float bottomOutside, float increaseLength, float topLength, float decreaseLength) {
-            float bottomLength = 1.0f - increaseLength - decreaseLength - topLength;
-
-            float y;
-            if (x < bottomLength) {
-                y = bottomInside;
-            } else if (x < bottomLength + increaseLength) {
-                y = (x - bottomLength) * (top - bottomInside) / increaseLength + bottomInside;
-            } else if (x < bottomLength + increaseLength + topLength) {
-                y = top;
-            } else if (x < bottomLength + increaseLength + topLength + decreaseLength) {
-                y = (1.0f - (x - bottomLength - increaseLength - topLength) / decreaseLength) * (top - bottomOutside) + bottomOutside;
-            } else {
-                y = bottomOutside;
-            }
-            return y;
+            return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
+                int cx = x - width / 2;
+                int cy = y - height / 2;
+                float alphaFactor = 1.0f - ((float)Math.Sqrt(cx * cx + cy * cy) / width * 2.0f);
+                return color * alphaFactor; 
+            }).BuildTexture(g);
         }
 
         public Texture2D Ring(int size, Color color, HillFunctionParameters fp) {
-            int width = size;
-            int height = size;
             float radius = size * 0.5f;
-            Texture2D texture = new Texture2D(g, width, height);
-            Color[] colors1D = new Color[width * height];
-            int i = 0;
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    float distX = x - radius;
-                    float distY = y - radius;
-                    float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
-                    float alphaFactor = HillFunction(dist / radius, fp.bottomInside, fp.top, fp.bottomOutside, fp.increaseLength, fp.topLength, fp.decreaseLength);
-                    colors1D[i++] = color * alphaFactor;
-                }
-            }
-            Debug.Assert(i == colors1D.Length);
-            texture.SetData(colors1D);
-            return texture;
+            return new TextureColorMapper(new IntVector2(size, size), (x, y) => {
+                float distX = x - radius;
+                float distY = y - radius;
+                float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
+                float alphaFactor = HillFunction(dist / radius, fp.bottomInside, fp.top, fp.bottomOutside, fp.increaseLength, fp.topLength, fp.decreaseLength);
+                return color * alphaFactor;
+            }).BuildTexture(g);
         }
 
         public Texture2D Sphere(int size, Color color) {
@@ -132,7 +112,7 @@ namespace Util {
             float distTop = radius - 1;
             float distDecrease = 1.0f;
 
-            TextureColorMapper.MappingFunction mappingFunction = (x, y) => {
+            return new TextureColorMapper(new IntVector2(size, size), (x, y) => {
                 float distX = x - radius;
                 float distY = y - radius;
                 float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
@@ -150,41 +130,24 @@ namespace Util {
                 }
 
                 return shadedColor * alphaFactor;
-            };
-
-            return new TextureColorMapper(new IntVector2(size, size), mappingFunction).Render(g);
+            }).BuildTexture(g);
         }
 
         public Texture2D VerticalGradient(int width, int height, Color colorTop, Color colorBottom) {
-            Texture2D texture = new Texture2D(g, width, height);
-            Color[] colors1D = new Color[width * height];
-            int i = 0;
-            for (int y = 0; y < height; ++y) {
-                Color color = BlendColors(colorTop, colorBottom, 1.0f - (float)y / (float)(height - 1));
-                for (int x = 0; x < width; ++x) {
-                    colors1D[i++] = color;
-                }
-            }
-            Debug.Assert(i == colors1D.Length);
-            texture.SetData(colors1D);
-            return texture;
+            return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
+                return BlendColors(colorTop, colorBottom, 1.0f - (float)y / (float)(height - 1));
+            }).BuildTexture(g);
         }
 
         public Texture2D Test(int width, int height) { //TODO: ...
-            Texture2D texture = new Texture2D(g, width, height);
-            Color[] colors = new Color[width * height];
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    float fx = x/(float)(Math.PI*2)/16;
-                    float fy = y/(float)(Math.PI*2)/16;
-                    float red = 0.5f*((float)Math.Sin(fx*fy)+1.0f);
-                    float green = 0.5f * ((float)-Math.Sin(fx * fy) + 1.0f);
-                    float blue = 0;
-                    colors[x + y*width] = new Color(red, green, blue);
-                }
-            }
-            texture.SetData(colors);
-            return texture;
+            return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
+                float fx = x / (float)(Math.PI * 2) / 16;
+                float fy = y / (float)(Math.PI * 2) / 16;
+                float red = 0.5f * ((float)Math.Sin(fx * fy) + 1.0f);
+                float green = 0.5f * ((float)-Math.Sin(fx * fy) + 1.0f);
+                float blue = 0;
+                return new Color(red, green, blue);
+            }).BuildTexture(g);
         }
 
         public Texture2D[,] Split(Texture2D texture, int count) {
