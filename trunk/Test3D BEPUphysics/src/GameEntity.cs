@@ -31,19 +31,30 @@ namespace EngineTest {
         }
 
         protected void DrawShape(Matrix worldMatrix, Shape3.Shape shape) {
-            /*
-            effect.World = physicsBox.WorldTransform;
-            effect.VertexColorEnabled = false;
-            effect.LightingEnabled = true;
-            effect.TextureEnabled = true;
-            effect.Texture = texture;
-            */
-
             Effect effect = Game.engine.Effect;
-            effect.Parameters["WorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
-            effect.Parameters["xTexture"].SetValue(Texture);
-            effect.Parameters["World"].SetValue(worldMatrix);
-            effect.Parameters["LightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
+
+            if (Game.engine.Effect is BasicEffect) {
+                BasicEffect basicEffect = (BasicEffect)Game.engine.Effect;
+                basicEffect.World = worldMatrix;
+                basicEffect.Projection = Game.camera.ProjectionMatrix;
+                basicEffect.View = Game.camera.ViewMatrix;
+
+                //basicEffect.World = physicsBox.WorldTransform;
+                /*
+                if (physicsEntities.Count > 0) {
+                    basicEffect.World = physicsEntities.First().WorldTransform;
+                }*/
+
+                basicEffect.VertexColorEnabled = false;
+                basicEffect.LightingEnabled = true;
+                basicEffect.TextureEnabled = true;
+                basicEffect.Texture = Texture;
+            } else {
+                effect.Parameters["WorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
+                effect.Parameters["xTexture"].SetValue(Texture);
+                effect.Parameters["World"].SetValue(worldMatrix);
+                effect.Parameters["LightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
+            }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
                 pass.Apply();
