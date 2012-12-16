@@ -38,22 +38,20 @@ namespace EngineTest {
                 basicEffect.World = worldMatrix;
                 basicEffect.Projection = Game.camera.ProjectionMatrix;
                 basicEffect.View = Game.camera.ViewMatrix;
-
-                //basicEffect.World = physicsBox.WorldTransform;
-                /*
-                if (physicsEntities.Count > 0) {
-                    basicEffect.World = physicsEntities.First().WorldTransform;
-                }*/
-
                 basicEffect.VertexColorEnabled = false;
                 basicEffect.LightingEnabled = true;
                 basicEffect.TextureEnabled = true;
                 basicEffect.Texture = Texture;
+
+                const float ambientComponent = 0.3f;
+                basicEffect.AmbientLightColor = new Vector3(ambientComponent, ambientComponent, ambientComponent);
             } else {
+                /*
                 effect.Parameters["WorldViewProjection"].SetValue(worldMatrix * Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
                 effect.Parameters["xTexture"].SetValue(Texture);
                 effect.Parameters["World"].SetValue(worldMatrix);
                 effect.Parameters["LightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
+                */
             }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes) {

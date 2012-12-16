@@ -7,6 +7,35 @@ using Microsoft.Xna.Framework;
 using System.Diagnostics;
 
 namespace Util {
+    public class TextureColorMapper {
+        public delegate Color MappingFunction(int x, int y);
+
+        public IntVector2 Size { get; protected set; }
+        Color[] colors1D;
+        MappingFunction mappingFunction;
+
+        public TextureColorMapper(IntVector2 size, MappingFunction mappingFunction) {
+            Size = size;
+            this.mappingFunction = mappingFunction;
+            colors1D = new Color[size.X * size.Y];
+        }
+
+        public Texture2D Render(GraphicsDevice g) {
+            Texture2D texture = new Texture2D(g, Size.X, Size.Y);
+
+            int i = 0;
+            for (int y = 0; y < Size.Y; ++y) {
+                for (int x = 0; x < Size.X; ++x) {
+                    colors1D[i++] = mappingFunction(x, y);
+                }
+            }
+            Debug.Assert(i == colors1D.Length);
+            texture.SetData(colors1D);
+
+            return texture;
+        }
+    }
+
     public class TextureBuilder {
         protected GraphicsDevice g;
 
@@ -99,40 +128,31 @@ namespace Util {
         }
 
         public Texture2D Sphere(int size, Color color) {
-            int width = size;
-            int height = size;
             float radius = size * 0.5f;
-            Texture2D texture = new Texture2D(g, width, height);
-            Color[] colors1D = new Color[width * height];
-
-            float distTop = radius-1;
+            float distTop = radius - 1;
             float distDecrease = 1.0f;
 
-            int i = 0;
-            for (int y = 0; y < height; ++y) {
-                for (int x = 0; x < width; ++x) {
-                    float distX = x - radius;
-                    float distY = y - radius;
-                    float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
-                    float normalizedDist = dist / radius;
-                    float brightness = (float)(Math.Acos(normalizedDist) / (Math.PI * 0.5));
-                    Color shadedColor = new Color(color.ToVector3() * brightness);
+            TextureColorMapper.MappingFunction mappingFunction = (x, y) => {
+                float distX = x - radius;
+                float distY = y - radius;
+                float dist = (float)Math.Sqrt(distX * distX + distY * distY) + 1;
+                float normalizedDist = dist / radius;
+                float brightness = (float)(Math.Acos(normalizedDist) / (Math.PI * 0.5));
+                Color shadedColor = new Color(color.ToVector3() * brightness);
 
-                    float alphaFactor;
-                    if (dist <= distTop) {
-                        alphaFactor = 1.0f;
-                    } else if(dist > distTop && dist <= distTop+distDecrease) {
-                        alphaFactor = 1.0f - (dist - distTop) / distDecrease;
-                    } else {
-                        alphaFactor = 0.0f;
-                    }
-
-                    colors1D[i++] = shadedColor * alphaFactor;
+                float alphaFactor;
+                if (dist <= distTop) {
+                    alphaFactor = 1.0f;
+                } else if (dist > distTop && dist <= distTop + distDecrease) {
+                    alphaFactor = 1.0f - (dist - distTop) / distDecrease;
+                } else {
+                    alphaFactor = 0.0f;
                 }
-            }
-            Debug.Assert(i == colors1D.Length);
-            texture.SetData(colors1D);
-            return texture;
+
+                return shadedColor * alphaFactor;
+            };
+
+            return new TextureColorMapper(new IntVector2(size, size), mappingFunction).Render(g);
         }
 
         public Texture2D VerticalGradient(int width, int height, Color colorTop, Color colorBottom) {

@@ -31,7 +31,7 @@ namespace EngineTest {
 
         Random random = new Random();
 
-		Vector3 debugVector = Vector3.Zero;
+        Vector3 debugVector = new Vector3(0.4f, -1, 0.4f);
         SpriteFont defaultFont;
 
         ArrowEntity lightArrow;
@@ -100,12 +100,14 @@ namespace EngineTest {
                 space.ForceUpdater.Gravity = new Vector3(0, -9.81f, 0);
             }
 
+            Texture2D groundTexture = Content.Load<Texture2D>("ground");
+            //Texture2D groundTexture = proceduralTexture.Sphere(125, new Color(1.0f, 0.5f, 0.0f, 0.5f));
             if (planeGround) {
                 float groundThickness = 0.05f;
-                Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, Content.Load<Texture2D>("ground")));
+                Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, groundTexture));
             } else {
                 float planetRadius = 8.0f;
-                Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, Content.Load<Texture2D>("ground"), 20.0f));
+                Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, groundTexture, 20.0f));
             }
 
             //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
@@ -435,8 +437,12 @@ namespace EngineTest {
                     }
                 }
 
-                engine.lightPos = debugVector;
-                //engine.lightDirection = 
+                //engine.lightPos = debugVector;
+                //engine.lightDirection = new Vector3(0.4f, -1, 0.4f);
+                Vector3 lightDirection = debugVector;
+                lightDirection.Normalize();
+                engine.lightDirection = lightDirection;
+                engine.lightPos = -engine.lightDirection;
 
                 lightArrow.position = engine.lightPos;
                 lightArrow.direction = Vector3.Normalize(engine.lightDirection);
