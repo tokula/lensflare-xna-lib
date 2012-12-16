@@ -6,7 +6,7 @@ using Util;
 
 namespace LensflareGameFramework {
     public class Engine {        
-        RenderTarget2D renderTarget;
+        //RenderTarget2D renderTarget; //shadow render target
         Random random = new Random(); //TODO: needed?
         Vector3 debugVector = Vector3.Zero;
 
@@ -62,13 +62,21 @@ namespace LensflareGameFramework {
             rasterizerState.CullMode = CullMode.CullCounterClockwiseFace;
             rasterizerState.MultiSampleAntiAlias = true;
             Game.GraphicsDevice.RasterizerState = rasterizerState;
+
             //Game.GraphicsDevice.BlendState = BlendState.Additive; //TODO: texturen mit alpha 0.5 sind trotzdem nicht transparent
+            /*
+            BlendState blendState = new BlendState();
+            blendState.AlphaDestinationBlend = Blend.Zero;
+            blendState.AlphaSourceBlend = Blend.One;
+            blendState.AlphaBlendFunction = BlendFunction.Add;
+            Game.GraphicsDevice.BlendState = blendState;
+            */
 
             //effect = new BasicEffect(GraphicsDevice);
             //Effect = Game.Content.Load<Effect>("TestEffect");
 
             //PresentationParameters pp = game.GraphicsDevice.PresentationParameters;
-            renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
+            //renderTarget = new RenderTarget2D(Game.GraphicsDevice, 1024 * 4, 1024 * 4, true, Game.GraphicsDevice.DisplayMode.Format, DepthFormat.Depth24);
 
             CenterMouseCursor();
         }
@@ -153,8 +161,8 @@ namespace LensflareGameFramework {
             ShadowMap = null;
             */
 
-            Game.GraphicsDevice.SetRenderTarget(null);
-            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            //Game.GraphicsDevice.SetRenderTarget(null);
+            Game.GraphicsDevice.Clear(ClearOptions.Target | ClearOptions.DepthBuffer, Color.CornflowerBlue, 1.0f, 0);
             DrawScene(null);
         }
 
@@ -172,6 +180,8 @@ namespace LensflareGameFramework {
                 if (!basicEffect.LightingEnabled) {
                     basicEffect.LightingEnabled = true;
                 }
+                basicEffect.DirectionalLight0.Direction = lightDirection;
+                //basicEffect.PreferPerPixelLighting = true;
             }
             Entity.DrawAll();
         }
