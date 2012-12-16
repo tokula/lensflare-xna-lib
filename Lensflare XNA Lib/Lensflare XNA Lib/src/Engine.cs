@@ -136,6 +136,7 @@ namespace LensflareGameFramework {
                 framesSinceLastFpsUpdate = 0;
             }
 
+            /*
             Game.GraphicsDevice.SetRenderTarget(renderTarget);
 
             Game.GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -150,15 +151,28 @@ namespace LensflareGameFramework {
             DrawScene("ShadowedScene");
 
             ShadowMap = null;
+            */
+
+            Game.GraphicsDevice.SetRenderTarget(null);
+            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
+            DrawScene(null);
         }
 
         protected void DrawScene(String technique) {
+            /*
             Effect.CurrentTechnique = Effect.Techniques[technique];
             Effect.Parameters["LightPos"].SetValue(lightPos);
             Effect.Parameters["LightPower"].SetValue(lightPower);
             Effect.Parameters["Ambient"].SetValue(ambientPower);
             Effect.Parameters["shadowMap"].SetValue(ShadowMap);
+            */
 
+            if (Effect is BasicEffect) {
+                BasicEffect basicEffect = (BasicEffect)Effect;
+                if (!basicEffect.LightingEnabled) {
+                    basicEffect.LightingEnabled = true;
+                }
+            }
             Entity.DrawAll();
         }
 
