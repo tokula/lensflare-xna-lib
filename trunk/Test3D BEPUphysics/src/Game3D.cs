@@ -101,7 +101,7 @@ namespace EngineTest {
             }
 
             Texture2D groundTexture = Content.Load<Texture2D>("ground");
-            //Texture2D groundTexture = proceduralTexture.Sphere(125, new Color(1.0f, 0.5f, 0.0f, 0.5f));
+            //Texture2D groundTexture = proceduralTexture.Sphere(512, new Color(1.0f, 0.5f, 0.0f, 0.5f));
             if (planeGround) {
                 float groundThickness = 0.05f;
                 Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, groundTexture));
