@@ -51,12 +51,22 @@ namespace Util {
 
             //the function graph
             if (F != null) {
+                Vector2? pLast = null;
                 for (int xs = 0; xs < Size.X * Scale; ++xs) {
                     float x = xs/Scale - Origin.X;
                     float y = F(x);
 
                     Vector2 p = OriginP + new Vector2(x, y) * Scale * hswap;
-                    Primitive2.DrawCircle(SpriteBatch, p, 1, Color.Orange, true, layerDepth);
+                    if (pLast.HasValue) {
+                        Vector2 delta = p - pLast.Value;
+                        float length = delta.Length() + 0.001f;
+                        delta.Normalize();
+                        delta = delta * length;
+                        Vector2 pOverlap = p + delta;
+
+                        Primitive2.DrawLine(SpriteBatch, pLast.Value, pOverlap, GraphColor, layerDepth);
+                    }
+                    pLast = p;
                 }
             }
         }
