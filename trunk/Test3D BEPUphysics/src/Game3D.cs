@@ -21,6 +21,7 @@ namespace EngineTest {
 	class Game3D : Microsoft.Xna.Framework.Game {
 		public SpriteBatch spriteBatch;
         public TextureBuilder proceduralTexture;
+        public FunctionPlotter fp;
 
         public Engine engine;
         public Space space;
@@ -82,6 +83,9 @@ namespace EngineTest {
             camera.AspectRatio = (float)GraphicsDevice.Viewport.Width / (float)GraphicsDevice.Viewport.Height;
 			camera.Position = new Vector3(0, 1, 10);
 			camera.Rotation = new Vector3(0, 0, 0);
+
+            fp = new FunctionPlotter(spriteBatch);
+            fp.PosOnScreen = engine.Viewport.GetCenter() - fp.Size*fp.Scale*0.5f;
 
             noteSound = new SoundEffect[] {
                 Content.Load<SoundEffect>("note_c"),
@@ -470,6 +474,8 @@ namespace EngineTest {
             Vector2 screenCenter = engine.Viewport.GetCenter();
             spriteBatch.Begin();
             spriteBatch.DrawString(defaultFont, "debugVector: " + VectorToString(debugVector), new Vector2(4, 0), Color.Blue);
+
+            fp.Draw();
 
             String fpsString = "FPS: " + engine.Fps;
             Vector2 fpsStringSize = defaultFont.MeasureString(fpsString);
