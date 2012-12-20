@@ -78,10 +78,9 @@ namespace Test2D {
                     } else {
                         return -1.0f;
                     }
-                },                 
+                },
                 body.Position,
                 Game.Camera.Unproject(Input.MousePosition));
-
             if (ropeJoint == null) {
                 if (hitPosition != null) {
                     //TestEntity testEntity = new TestEntity(Game, hitPosition.Value, 5.0f, 1.0f);
