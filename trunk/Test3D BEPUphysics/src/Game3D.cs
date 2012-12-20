@@ -84,7 +84,10 @@ namespace EngineTest {
 			camera.Position = new Vector3(0, 1, 10);
 			camera.Rotation = new Vector3(0, 0, 0);
 
-            fp = new FunctionPlotter(spriteBatch, x => (float)Math.Sin(x*10));
+            fp = new FunctionPlotter(spriteBatch, new ColoredFunction[] { 
+                new ColoredFunction(Color.Orange, x => (float)Math.Sin(x*10)),
+                new ColoredFunction(Color.Green, x => (float)Math.Sin(x*5)),
+            });
             fp.PosOnScreen = engine.Viewport.GetCenter() - fp.Size*fp.Scale*0.5f;
 
             noteSound = new SoundEffect[] {
