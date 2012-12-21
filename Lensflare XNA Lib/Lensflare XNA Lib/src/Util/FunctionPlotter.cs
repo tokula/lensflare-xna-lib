@@ -34,7 +34,7 @@ namespace Util {
 
             Size = new Vector2(4, 3);
             Scale = 200.0f;
-            BorderColor = Color.Black * 0.5f;
+            BorderColor = Color.Black * 0.8f;
             AxesColor = Color.White * 0.8f;
 
             Origin = Vector2.One * 1.0f;

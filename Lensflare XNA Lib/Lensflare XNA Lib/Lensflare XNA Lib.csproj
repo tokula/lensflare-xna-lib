@@ -118,6 +118,7 @@
     <Compile Include="src\Extension\Color.cs" />
     <Compile Include="src\Extension\Enum.cs" />
     <Compile Include="src\Extension\GraphicsDeviceManager.cs" />
+    <Compile Include="src\Extension\Math.cs" />
     <Compile Include="src\Extension\Texture2D.cs" />
     <Compile Include="src\Extension\Viewport.cs" />
     <Compile Include="src\Program.cs" />
