@@ -140,8 +140,10 @@ namespace Util {
         }
 
         public Texture2D Test(int width, int height) { //TODO: ...
+            Random random = new Random();
+
             return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
-                float fx = x / (float)(Math.PI * 2) / 16;
+                float fx = x / (float)(Math.PI * 2 + random.Next(2)) / 16;
                 float fy = y / (float)(Math.PI * 2) / 16;
                 float red = 0.5f * ((float)Math.Sin(fx * fy) + 1.0f);
                 float green = 0.5f * ((float)-Math.Sin(fx * fy) + 1.0f);

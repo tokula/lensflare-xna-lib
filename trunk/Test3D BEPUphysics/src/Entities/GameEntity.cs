@@ -11,7 +11,7 @@ namespace EngineTest {
         protected List<BEPUphysics.Entities.Entity> physicsEntities = new List<BEPUphysics.Entities.Entity>();
 
         public Game3D Game { get; private set; }
-        public Texture2D Texture { get; set; }
+        virtual public Texture2D Texture { get; set; }
         public List<BEPUphysics.Entities.Entity> PhysicsEntities { get { return physicsEntities; } }
 
         public GameEntity(Game3D game, Texture2D texture) {
