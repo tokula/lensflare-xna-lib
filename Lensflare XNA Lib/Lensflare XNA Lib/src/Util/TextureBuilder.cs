@@ -139,11 +139,53 @@ namespace Util {
             }).BuildTexture(g);
         }
 
+        public Texture2D Bricks(int width, int height) {
+            Random random = new Random();
+
+            float brickW = 0.25f;
+            float brickH = 0.08f;
+            float mortarThickness = 0.01f;
+            float bmW = brickW + mortarThickness;
+            float bmH = brickH + mortarThickness;
+            float mwf = mortarThickness * 0.5f / bmW;
+            float mhf = mortarThickness * 0.5f / bmH;
+
+            Color brickColor = new Color(0.5f, 0.15f, 0.14f);
+            Color mortarColor = new Color(0.5f, 0.5f, 0.5f);
+
+            return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
+                float s = (float)x / (float)width;
+                float t = (float)y / (float)height;
+                float ss, tt, sbrick, tbrick, w, h;
+                float scoord = s;
+                float tcoord = t;
+                //Vector2 Nf = normalize(faceforward(N, I));
+                ss = scoord / bmW;
+                tt = tcoord / bmH;
+                if (MathProcedural.Mod(tt * 0.5f, 1.0f) > 0.5f) {
+                    ss += 0.5f;
+                }
+                sbrick = (float)Math.Floor(ss); /* which brick? */
+                tbrick = (float)Math.Floor(tt); /* which brick? */
+                ss -= sbrick;
+                tt -= tbrick;
+
+                w = MathProcedural.Step(mwf, ss) - MathProcedural.Step(1 - mwf, ss);
+                h = MathProcedural.Step(mhf, tt) - MathProcedural.Step(1 - mhf, tt);
+                Color Ct = mortarColor.Mix(brickColor, w * h);
+
+                /* diffuse reflection model */
+                //Oi = Os;
+                //Ci = Os * Ct * (Ka * ambient() + Kd * diffuse(Nf));
+                return Ct;
+            }).BuildTexture(g);
+        }
+
         public Texture2D Test(int width, int height) { //TODO: ...
             Random random = new Random();
 
             return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
-                float fx = x / (float)(Math.PI * 2 + random.Next(2)) / 16;
+                float fx = x / (float)(Math.PI * 2) / 16;
                 float fy = y / (float)(Math.PI * 2) / 16;
                 float red = 0.5f * ((float)Math.Sin(fx * fy) + 1.0f);
                 float green = 0.5f * ((float)-Math.Sin(fx * fy) + 1.0f);
