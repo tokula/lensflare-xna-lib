@@ -249,7 +249,7 @@ namespace EngineTest {
             }
 
             if (Input.KeyboardPressed(Keys.T)) {
-                ProceduralTexture = textureBuilder.Test(1024, 1024);
+                ProceduralTexture = textureBuilder.Bricks(1024, 1024);
             }
 
             if (Input.KeyboardPressed(Keys.X)) {
