@@ -142,9 +142,9 @@ namespace Util {
         public Texture2D Bricks(int width, int height) {
             Random random = new Random();
 
-            float brickW = 0.25f;
+            float brickW = 0.20f;
             float brickH = 0.08f;
-            float mortarThickness = 0.01f;
+            float mortarThickness = 0.02f;
             float bmW = brickW + mortarThickness;
             float bmH = brickH + mortarThickness;
             float mwf = mortarThickness * 0.5f / bmW;
@@ -152,31 +152,40 @@ namespace Util {
 
             Color brickColor = new Color(0.5f, 0.15f, 0.14f);
             Color mortarColor = new Color(0.5f, 0.5f, 0.5f);
+            Color mortarColor2 = new Color(0.3f, 0.15f, 0.15f);
 
             return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
                 float s = (float)x / (float)width;
                 float t = (float)y / (float)height;
-                float ss, tt, sbrick, tbrick, w, h;
-                float scoord = s;
-                float tcoord = t;
+                //float scoord = s;
+                //float tcoord = t;
                 //Vector2 Nf = normalize(faceforward(N, I));
-                ss = scoord / bmW;
-                tt = tcoord / bmH;
+                float ss = s / bmW;
+                float tt = t / bmH;
                 if (MathProcedural.Mod(tt * 0.5f, 1.0f) > 0.5f) {
                     ss += 0.5f;
                 }
-                sbrick = (float)Math.Floor(ss); /* which brick? */
-                tbrick = (float)Math.Floor(tt); /* which brick? */
+                float sbrick = (float)Math.Floor(ss); /* which brick? */
+                float tbrick = (float)Math.Floor(tt); /* which brick? */
                 ss -= sbrick;
                 tt -= tbrick;
 
-                w = MathProcedural.Step(mwf, ss) - MathProcedural.Step(1 - mwf, ss);
-                h = MathProcedural.Step(mhf, tt) - MathProcedural.Step(1 - mhf, tt);
-                Color Ct = mortarColor.Mix(brickColor, w * h);
+                float w = MathProcedural.Step(mwf, ss) - MathProcedural.Step(1 - mwf, ss);
+                float h = MathProcedural.Step(mhf, tt) - MathProcedural.Step(1 - mhf, tt);
+
+
+                /* compute bump-mapping function for mortar grooves */
+                float sbump = MathProcedural.SmoothStep(0, mwf, ss) - MathProcedural.SmoothStep(1 - mwf, 1, ss);
+                float tbump = MathProcedural.SmoothStep(0, mhf, tt) - MathProcedural.SmoothStep(1 - mhf, 1, tt);
+                float stbump = sbump * tbump;
 
                 /* diffuse reflection model */
                 //Oi = Os;
                 //Ci = Os * Ct * (Ka * ambient() + Kd * diffuse(Nf));
+
+                Color shadedMortarColor = mortarColor.Mix(mortarColor2, stbump);
+                Color Ct = shadedMortarColor.Mix(brickColor, w * h);
+
                 return Ct;
             }).BuildTexture(g);
         }
