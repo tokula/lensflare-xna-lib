@@ -14,6 +14,13 @@ namespace EngineTest {
             set { }
         }
 
+        override public Texture2D BumpMapTexture {
+            get {
+                return Game.ProceduralBumpMapTexture;
+            }
+            set { }
+        }
+
         public TestBoxEntity(Game3D game, Vector3 position, Vector3 size, float mass) : base(game, position, size, mass, null) {
 
 		}

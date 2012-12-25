@@ -30,6 +30,7 @@ namespace EngineTest {
         SoundEffect[] noteSound;
 
         public Texture2D ProceduralTexture { get; protected set; }
+        public Texture2D ProceduralBumpMapTexture { get; protected set; }
 
         public SmoothCamera3 camera;
 
@@ -251,6 +252,7 @@ namespace EngineTest {
 
             if (Input.KeyboardPressed(Keys.T)) {
                 ProceduralTexture = textureBuilder.Bricks(1024, 1024);
+                ProceduralBumpMapTexture = textureBuilder.BricksBumpMap(1024, 1024);
             }
 
             if (Input.KeyboardPressed(Keys.X)) {
