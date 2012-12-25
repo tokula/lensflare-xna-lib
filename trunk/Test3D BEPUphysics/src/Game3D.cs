@@ -36,10 +36,11 @@ namespace EngineTest {
 
         Random random = new Random();
 
-        Vector3 debugVector = new Vector3(0.4f, -1, 0.4f);
+        Vector3 debugVector = new Vector3(0, 1, 0);
         SpriteFont defaultFont;
 
-        ArrowEntity lightArrow;
+        //ArrowEntity lightArrow;
+        LampEntity lamp;
 
         Dictionary<IntVector2, Tile> tiles = new Dictionary<IntVector2, Tile>();
 
@@ -126,12 +127,12 @@ namespace EngineTest {
                 Entity.Add(new ForceEntity(this, Vector3.Zero, planetRadius, -1, groundTexture, 20.0f));
             }
 
-            //Entity.Add(new BoxEntity(this, new Vector3(0, -groundThickness, 0), new Vector3(5, groundThickness, 5), -1, engine.ColorToTexture(Color.Gray)));
-            //Entity.Add(new BoxEntity(this, new Vector3(0, 5, 0), new Vector3(1, 1, 1) * 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-            //Entity.Add(new SphereEntity(this, new Vector3(0, 5, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis")));
-            lightArrow = new ArrowEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1), true, textureBuilder.TextureFromColor(new Color(1.0f, 0.5f, 0.0f, 0.5f)));
-            Entity.Add(lightArrow);
-            //Entity.Add(new GroundEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1) * 0.5f, Content.Load<Texture2D>("tits")));
+            lamp = new LampEntity(this, new Vector3(0, 0, 0), 0.1f);
+            Entity.Add(lamp);
+
+            //lightArrow = new ArrowEntity(this, new Vector3(0, 0, 0), new Vector3(1, 1, 1), true, textureBuilder.TextureFromColor(new Color(1.0f, 0.5f, 0.0f, 0.5f)));
+            //Entity.Add(lightArrow);
+
             creator = new Creator(this, new Vector3(0, 2, 0), 0.5f, 1, Content.Load<Texture2D>("metallkreis"));
             Entity.Add(creator);
 		}
@@ -171,19 +172,19 @@ namespace EngineTest {
                 debugVector.X += debugValueSpeed;
                 debugValueHasChanged = true;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
+            if (Keyboard.GetState().IsKeyDown(Keys.PageUp)) {
                 debugVector.Y += debugValueSpeed;
                 debugValueHasChanged = true;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
+            if (Keyboard.GetState().IsKeyDown(Keys.PageDown)) {
                 debugVector.Y -= debugValueSpeed;
                 debugValueHasChanged = true;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.PageUp)) {
+            if (Keyboard.GetState().IsKeyDown(Keys.Up)) {
                 debugVector.Z += debugValueSpeed;
                 debugValueHasChanged = true;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.PageDown)) {
+            if (Keyboard.GetState().IsKeyDown(Keys.Down)) {
                 debugVector.Z -= debugValueSpeed;
                 debugValueHasChanged = true;
             }
@@ -463,15 +464,19 @@ namespace EngineTest {
                     }
                 }
 
-                //engine.lightPos = debugVector;
-                //engine.lightDirection = new Vector3(0.4f, -1, 0.4f);
+                /*
                 Vector3 lightDirection = debugVector;
                 lightDirection.Normalize();
                 engine.lightDirection = lightDirection;
                 engine.lightPos = -engine.lightDirection;
+                */
+                engine.lightPos = debugVector;
 
-                lightArrow.position = engine.lightPos;
-                lightArrow.direction = Vector3.Normalize(engine.lightDirection);
+                //lightArrow.position = engine.lightPos;
+                //lightArrow.direction = Vector3.Normalize(engine.lightDirection);
+
+                lamp.Position = engine.lightPos;
+                
 
                 camera.Update(gameTime);
                 space.Update(elapsedSeconds);
