@@ -190,6 +190,64 @@ namespace Util {
             }).BuildTexture(g);
         }
 
+        public Texture2D BricksBumpMap(int width, int height) {
+            Random random = new Random();
+
+            float brickW = 0.20f;
+            float brickH = 0.08f;
+            float mortarThickness = 0.02f;
+            float bmW = brickW + mortarThickness;
+            float bmH = brickH + mortarThickness;
+            float mwf = mortarThickness * 0.5f / bmW;
+            float mhf = mortarThickness * 0.5f / bmH;
+
+            /*
+            Color brickColor = new Color(0.5f, 0.15f, 0.14f);
+            Color mortarColor = new Color(0.5f, 0.5f, 0.5f);
+            Color mortarColor2 = new Color(0.3f, 0.15f, 0.15f);
+            */
+
+            return new TextureColorMapper(new IntVector2(width, height), (x, y) => {
+                float s = (float)x / (float)width;
+                float t = (float)y / (float)height;
+                //float scoord = s;
+                //float tcoord = t;
+                //Vector2 Nf = normalize(faceforward(N, I));
+                float ss = s / bmW;
+                float tt = t / bmH;
+                if (MathProcedural.Mod(tt * 0.5f, 1.0f) > 0.5f) {
+                    ss += 0.5f;
+                }
+                float sbrick = (float)Math.Floor(ss); /* which brick? */
+                float tbrick = (float)Math.Floor(tt); /* which brick? */
+                ss -= sbrick;
+                tt -= tbrick;
+
+                float w = MathProcedural.Step(mwf, ss) - MathProcedural.Step(1 - mwf, ss);
+                float h = MathProcedural.Step(mhf, tt) - MathProcedural.Step(1 - mhf, tt);
+
+
+                /* compute bump-mapping function for mortar grooves */
+                float sbump = MathProcedural.SmoothStep(0, mwf, ss) - MathProcedural.SmoothStep(1 - mwf, 1, ss);
+                float tbump = MathProcedural.SmoothStep(0, mhf, tt) - MathProcedural.SmoothStep(1 - mhf, 1, tt);
+                float stbump = sbump * tbump;
+
+                /* diffuse reflection model */
+                //Oi = Os;
+                //Ci = Os * Ct * (Ka * ambient() + Kd * diffuse(Nf));
+
+                float brickFactor = w * h;
+                Vector3 normal = new Vector3(0, -(1-brickFactor)*stbump, brickFactor);
+                normal.Normalize();
+                normal += Vector3.One;
+                normal *= 0.5f;
+
+                Color Ct = new Color(normal);
+
+                return Ct;
+            }).BuildTexture(g);
+        }
+
         public Texture2D Test(int width, int height) { //TODO: ...
             Random random = new Random();
 

@@ -12,6 +12,7 @@ namespace EngineTest {
 
         public Game3D Game { get; private set; }
         virtual public Texture2D Texture { get; set; }
+        virtual public Texture2D BumpMapTexture { get; set; }
         public List<BEPUphysics.Entities.Entity> PhysicsEntities { get { return physicsEntities; } }
 
         public GameEntity(Game3D game, Texture2D texture) {
@@ -33,6 +34,8 @@ namespace EngineTest {
         protected void DrawShape(Matrix worldMatrix, Shape3.Shape shape) {
             Effect effect = Game.engine.Effect;
 
+            const float ambientComponent = 0.3f;
+
             if (Game.engine.Effect is BasicEffect) {
                 BasicEffect basicEffect = (BasicEffect)Game.engine.Effect;
                 basicEffect.World = worldMatrix;
@@ -43,8 +46,6 @@ namespace EngineTest {
                 basicEffect.TextureEnabled = true;
                 basicEffect.Texture = Texture;
                 
-
-                const float ambientComponent = 0.3f;
                 basicEffect.AmbientLightColor = new Vector3(ambientComponent, ambientComponent, ambientComponent);
             } else {
                 /*
@@ -58,7 +59,16 @@ namespace EngineTest {
                 effect.Parameters["View"].SetValue(Game.camera.ViewMatrix);
                 effect.Parameters["Projection"].SetValue(Game.camera.ProjectionMatrix);
                 //effect.Parameters["ViewProjection"].SetValue(Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
-                effect.Parameters["Texture"].SetValue(Texture);
+                effect.Parameters["ColorTexture"].SetValue(Texture);
+                if (BumpMapTexture != null) {
+                    effect.Parameters["BumpMapTexture"].SetValue(BumpMapTexture);
+                }
+                effect.Parameters["HasBumpMapTexture"].SetValue(BumpMapTexture != null);
+
+
+                effect.Parameters["LightPos"].SetValue(Game.engine.lightPos);
+                effect.Parameters["LightPower"].SetValue(1.0f);
+                effect.Parameters["Ambient"].SetValue(ambientComponent);
             }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
