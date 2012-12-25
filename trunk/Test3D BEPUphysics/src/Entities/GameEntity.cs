@@ -42,6 +42,7 @@ namespace EngineTest {
                 basicEffect.LightingEnabled = true;
                 basicEffect.TextureEnabled = true;
                 basicEffect.Texture = Texture;
+                
 
                 const float ambientComponent = 0.3f;
                 basicEffect.AmbientLightColor = new Vector3(ambientComponent, ambientComponent, ambientComponent);
@@ -52,6 +53,12 @@ namespace EngineTest {
                 effect.Parameters["World"].SetValue(worldMatrix);
                 effect.Parameters["LightsWorldViewProjection"].SetValue(worldMatrix * Game.engine.lightsViewProjectionMatrix);
                 */
+
+                effect.Parameters["World"].SetValue(worldMatrix);
+                effect.Parameters["View"].SetValue(Game.camera.ViewMatrix);
+                effect.Parameters["Projection"].SetValue(Game.camera.ProjectionMatrix);
+                //effect.Parameters["ViewProjection"].SetValue(Game.camera.ViewMatrix * Game.camera.ProjectionMatrix);
+                effect.Parameters["Texture"].SetValue(Texture);
             }
 
             foreach (EffectPass pass in effect.CurrentTechnique.Passes) {
