@@ -29,7 +29,11 @@ namespace EngineTest {
         }
 
         public override void Draw() {
+            //float prevAmbient = Game.engine.Effect.Parameters["Ambient"].GetValueSingle();
+            //Game.engine.Effect.Parameters["Ambient"].SetValue(1);
+
             DrawShape(Matrix.CreateTranslation(Position), sphereShape);
+            //Game.engine.Effect.Parameters["Ambient"].SetValue(prevAmbient);
         }
     }
 }
