@@ -55,13 +55,21 @@ PixelToFrame OurFirstPixelShader(VertexToPixel PSIn)
 
 	float bumpFactor = 1;
 	if(HasBumpMapTexture) {
+		float4x4 mat;
+		mat[0] = float4(1,0,0,0); mat[1] = float4(0,1,0,0); mat[2] = float4(0,0,1,0); mat[3] = float4(0,0,0,1);
+		//mat = mul(PSIn.Normal, mat);
+
 		float4 bumpNormalAsColor = tex2D(BumpMapTextureSampler, PSIn.TexCoords);
 		bumpNormalAsColor[0] = (bumpNormalAsColor[0]-0.5)*2;
 		bumpNormalAsColor[1] = (bumpNormalAsColor[1]-0.5)*2;
 		bumpNormalAsColor[2] = (bumpNormalAsColor[2]-0.5)*2;
 		bumpNormalAsColor[3] = 0;//(bumpNormalAsColor[3]-0.5)*2;
-		bumpNormalAsColor = mul(bumpNormalAsColor, World);
+		bumpNormalAsColor = mul(World, bumpNormalAsColor);
+		//bumpNormalAsColor = mul(mat, bumpNormalAsColor);
 		bumpNormalAsColor = normalize(bumpNormalAsColor);
+
+
+
 		bumpFactor = mul(bumpNormalAsColor, PSIn.Normal);
 	}
 
