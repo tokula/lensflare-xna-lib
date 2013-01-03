@@ -237,10 +237,14 @@ namespace Util {
                 //Ci = Os * Ct * (Ka * ambient() + Kd * diffuse(Nf));
 
                 float brickFactor = w * h;
-                Vector3 normal = new Vector3(0, -(1-brickFactor)*stbump, brickFactor);
-                normal.Normalize();
+                //Vector3 normal = new Vector3(0, -(1-brickFactor)*stbump, brickFactor);
+                Vector3 normal = new Vector3(0.5f, 1.0f, 0.5f);
+                //normal.Normalize();
+                /*
                 normal += Vector3.One;
                 normal *= 0.5f;
+                */
+                
 
                 Color Ct = new Color(normal);
 
